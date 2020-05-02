@@ -10,6 +10,9 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: "mariadb",
+    dialectOptions: {
+      timezone: process.env.DB_TIMEZONE,
+    },
     pool: {
       max: 5,
       min: 0,

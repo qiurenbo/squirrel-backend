@@ -7,7 +7,8 @@ class Order extends sequelize_1.Model {
 }
 Order.init({
     id: {
-        type: sequelize_1.DataTypes.STRING,
+        type: sequelize_1.DataTypes.UUID,
+        defaultValue: sequelize_1.DataTypes.UUIDV4,
         primaryKey: true,
     },
 }, {

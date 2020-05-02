@@ -10,7 +10,8 @@ class Order extends Model {
 Order.init(
   {
     id: {
-      type: DataTypes.STRING, // you can omit the `new` but this is discouraged
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
   },

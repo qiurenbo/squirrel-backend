@@ -1,38 +1,36 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/mariadb";
-export default class Addr extends Model {
+
+export default class Account extends Model {
   id: string; // ⇨ uuid'9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
-  name: string;
-  addr: string;
-  tel: string;
-  type: string;
+  username: string;
+  email: string;
+  password: string;
 }
 
-Addr.init(
+Account.init(
   {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    name: {
+    username: {
       type: DataTypes.STRING,
     },
-    addr: {
+    email: {
       type: DataTypes.STRING,
+      unique: true,
     },
-    tel: {
-      type: DataTypes.STRING,
-    },
-    type: {
+    password: {
       type: DataTypes.STRING,
     },
   },
 
   {
     sequelize,
-    tableName: "addr",
+    tableName: "Account",
   }
 );
 
-Addr.sync({ force: true });
+Account.sync({ force: true });
