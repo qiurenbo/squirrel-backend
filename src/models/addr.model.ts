@@ -17,15 +17,19 @@ Addr.init(
     },
     name: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     addr: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     tel: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     type: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
   },
 

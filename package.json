@@ -24,8 +24,14 @@
     "typescript": "^3.8.3",
     "uuid": "^8.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "sequelize-cli": "^5.5.1"
+  },
   "scripts": {
+    "db:create": "node scripts/createDB.js",
+    "db:drop": "node scripts/dropDB.js",
+    "db:migrate": "npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
+    "db:migrate:undo": "npx sequelize-cli db:seed:undo:all && npx sequelize-cli db:migrate:undo:all",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ."
   },

@@ -14,11 +14,11 @@ const cryptoPassword = (password) => {
         .update(password)
         .digest("base64");
 };
-const cloneAccountWihoutPassword = (account) => {
+const cloneAccountWithoutPassword = (account) => {
     return {
         id: account.id,
         username: account.username,
-        email: account.email,
+        email: account.email
     };
 };
 const validationMiddleware = () => {
@@ -61,9 +61,9 @@ const loginValidationMiddleware = () => {
 router.post("/", validationMiddleware(), async (ctx, next) => {
     ctx.request.body.id = uuid_1.v4();
     ctx.request.body.password = cryptoPassword(ctx.request.body.password);
-    await Account_model_1.default.create(ctx.request.body).then((Account) => {
-        ctx.body = cloneAccountWihoutPassword(Account);
-    }, (error) => {
+    await Account_model_1.default.create(ctx.request.body).then(Account => {
+        ctx.body = cloneAccountWithoutPassword(Account);
+    }, error => {
         if (error instanceof sequelize_1.UniqueConstraintError) {
             ctx.status = 409;
             ctx.body = {};
@@ -74,8 +74,8 @@ router.post("/", validationMiddleware(), async (ctx, next) => {
 router.post("/login", loginValidationMiddleware(), async (ctx, next) => {
     // Authentication
     await Account_model_1.default.findOne({
-        where: { email: ctx.request.body.email },
-    }).then((account) => {
+        where: { email: ctx.request.body.email }
+    }).then(account => {
         if (account.password === cryptoPassword(ctx.request.body.password)) {
             const token = jwt.sign({ email: account.email }, process.env.CRYPRTO_KEY, { expiresIn: "7d" });
             ctx.body = { accessToken: token };
@@ -86,8 +86,8 @@ router.put("/:id", jwt_middleware_1.default(), loginValidationMiddleware(), asyn
     await Account_model_1.default.findOne({ where: { id: ctx.params.id } }).then(async (Account) => {
         if (Account) {
             Account.password = cryptoPassword(Account.password);
-            await Account.update(Account).then((Account) => {
-                ctx.body = cloneAccountWihoutPassword(Account);
+            await Account.update(Account).then(Account => {
+                ctx.body = cloneAccountWithoutPassword(Account);
             });
         }
         else {
@@ -98,7 +98,7 @@ router.put("/:id", jwt_middleware_1.default(), loginValidationMiddleware(), asyn
 });
 router.delete("/:id", jwt_middleware_1.default(), async (ctx, next) => {
     await Account_model_1.default.destroy({
-        where: { id: ctx.params.id },
+        where: { id: ctx.params.id }
     }).then(() => {
         ctx.body = {};
     });
