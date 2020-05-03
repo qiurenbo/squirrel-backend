@@ -13,17 +13,20 @@ Account.init({
     },
     username: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
     },
     email: {
         type: sequelize_1.DataTypes.STRING,
         unique: true,
+        allowNull: false,
     },
     password: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
     },
 }, {
     sequelize: mariadb_1.default,
     tableName: "Account",
 });
-Account.sync({ force: true });
+// Account.sync({ force: true });
 //# sourceMappingURL=Account.model.js.map

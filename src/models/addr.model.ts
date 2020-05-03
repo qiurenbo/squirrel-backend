@@ -35,8 +35,8 @@ Addr.init(
 
   {
     sequelize,
-    tableName: "addr",
+    tableName: "addrs",
   }
 );
 
-Addr.sync({ force: true });
+// Addr.sync({ force: true });

@@ -32,8 +32,8 @@ Account.init(
 
   {
     sequelize,
-    tableName: "Account",
+    tableName: "accounts",
   }
 );
 
-Account.sync({ force: true });
+// Account.sync({ force: true });

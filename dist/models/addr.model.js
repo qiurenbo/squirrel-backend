@@ -13,19 +13,23 @@ Addr.init({
     },
     name: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
     },
     addr: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
     },
     tel: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
     },
     type: {
         type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
     },
 }, {
     sequelize: mariadb_1.default,
     tableName: "addr",
 });
-Addr.sync({ force: true });
+// Addr.sync({ force: true });
 //# sourceMappingURL=addr.model.js.map
