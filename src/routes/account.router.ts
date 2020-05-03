@@ -14,11 +14,11 @@ const cryptoPassword = (password: string) => {
     .digest("base64");
 };
 
-const cloneAccountWihoutPassword = (account: AccountModel) => {
+const cloneAccountWithoutPassword = (account: AccountModel) => {
   return {
     id: account.id,
     username: account.username,
-    email: account.email,
+    email: account.email
   };
 };
 
@@ -75,10 +75,10 @@ router.post("/", validationMiddleware(), async (ctx, next) => {
   ctx.request.body.password = cryptoPassword(ctx.request.body.password);
 
   await AccountModel.create(ctx.request.body).then(
-    (Account) => {
-      ctx.body = cloneAccountWihoutPassword(Account);
+    Account => {
+      ctx.body = cloneAccountWithoutPassword(Account);
     },
-    (error) => {
+    error => {
       if (error instanceof UniqueConstraintError) {
         ctx.status = 409;
         ctx.body = {};
@@ -91,8 +91,8 @@ router.post("/", validationMiddleware(), async (ctx, next) => {
 router.post("/login", loginValidationMiddleware(), async (ctx, next) => {
   // Authentication
   await AccountModel.findOne({
-    where: { email: ctx.request.body.email },
-  }).then((account) => {
+    where: { email: ctx.request.body.email }
+  }).then(account => {
     if (account.password === cryptoPassword(ctx.request.body.password)) {
       const token = jwt.sign(
         { email: account.email },
@@ -110,11 +110,11 @@ router.put(
   loginValidationMiddleware(),
   async (ctx, next) => {
     await AccountModel.findOne({ where: { id: ctx.params.id } }).then(
-      async (Account) => {
+      async Account => {
         if (Account) {
           Account.password = cryptoPassword(Account.password);
-          await Account.update(Account).then((Account) => {
-            ctx.body = cloneAccountWihoutPassword(Account);
+          await Account.update(Account).then(Account => {
+            ctx.body = cloneAccountWithoutPassword(Account);
           });
         } else {
           ctx.status = 404;
@@ -127,7 +127,7 @@ router.put(
 
 router.delete("/:id", authenticationMiddleware(), async (ctx, next) => {
   await AccountModel.destroy({
-    where: { id: ctx.params.id },
+    where: { id: ctx.params.id }
   }).then(() => {
     ctx.body = {};
   });
