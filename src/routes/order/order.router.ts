@@ -1,16 +1,13 @@
 import * as Router from "koa-router";
-
-import AddrModel from "../models/addr.model";
+import ActionRouter from "./action.router";
+import OrderModel from "../../models/order/order.model";
 const router = new Router();
 
+router.use("/actions", ActionRouter.routes());
 // Sequelize default use UTC time
-const cloneAddr = (addr: AddrModel) => {
+const cloneOrder = (order: OrderModel) => {
   return {
-    id: addr.id,
-    name: addr.name,
-    addr: addr.addr,
-    tel: addr.tel,
-    type: addr.type,
+    id: order.id,
   };
 };
 
@@ -18,7 +15,7 @@ const validationMiddleware = () => {
   return async (ctx: any, next: any) => {
     if (
       !ctx.request.body.name ||
-      !ctx.request.body.addr ||
+      !ctx.request.body.order ||
       !ctx.request.body.tel ||
       !ctx.request.body.type
     ) {
@@ -28,8 +25,8 @@ const validationMiddleware = () => {
         ctx.body.name = "Name is required.";
       }
 
-      if (!ctx.request.body.addr) {
-        ctx.body.addr = "Addr is required.";
+      if (!ctx.request.body.order) {
+        ctx.body.order = "Order is required.";
       }
 
       if (!ctx.request.body.tel) {
@@ -48,17 +45,17 @@ const validationMiddleware = () => {
 };
 
 router.get("/", async (ctx, next) => {
-  await AddrModel.findAll().then((addrs) => {
-    ctx.body = addrs;
+  await OrderModel.findAll().then((orders) => {
+    ctx.body = orders;
   });
 });
 
 router.post("/", validationMiddleware(), async (ctx, next) => {
-  await AddrModel.findOne({ where: { name: ctx.request.body.name } }).then(
-    async (addr) => {
-      if (!addr) {
-        await AddrModel.create(ctx.request.body).then((addr) => {
-          ctx.body = cloneAddr(addr);
+  await OrderModel.findOne({ where: { name: ctx.request.body.name } }).then(
+    async (order) => {
+      if (!order) {
+        await OrderModel.create(ctx.request.body).then((order) => {
+          ctx.body = cloneOrder(order);
         });
       } else {
         ctx.status = 400;
@@ -68,12 +65,12 @@ router.post("/", validationMiddleware(), async (ctx, next) => {
   );
 });
 
-router.put("/:addrId", validationMiddleware(), async (ctx, next) => {
-  await AddrModel.findOne({ where: { id: ctx.params.addrId } }).then(
-    async (addr) => {
-      if (addr) {
-        await addr.update(ctx.request.body).then((addr) => {
-          ctx.body = cloneAddr(addr);
+router.put("/:orderId", validationMiddleware(), async (ctx, next) => {
+  await OrderModel.findOne({ where: { id: ctx.params.orderId } }).then(
+    async (order) => {
+      if (order) {
+        await order.update(ctx.request.body).then((order) => {
+          ctx.body = cloneOrder(order);
         });
       } else {
         ctx.status = 404;
@@ -83,9 +80,9 @@ router.put("/:addrId", validationMiddleware(), async (ctx, next) => {
   );
 });
 
-router.delete("/:addrId", async (ctx, next) => {
-  await AddrModel.destroy({
-    where: { id: ctx.params.addrId },
+router.delete("/:orderId", async (ctx, next) => {
+  await OrderModel.destroy({
+    where: { id: ctx.params.orderId },
   }).then(() => {
     ctx.body = {};
   });

@@ -11,8 +11,12 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     dialect: "mariadb",
     dialectOptions: {
+      // useUTC: false, //for reading from database
+      dateStrings: true,
+      typeCast: true,
       timezone: process.env.DB_TIMEZONE,
     },
+    timezone: process.env.DB_TIMEZONE, //for writing to database
     pool: {
       max: 5,
       min: 0,

@@ -32,6 +32,7 @@
     "db:drop": "node scripts/dropDB.js",
     "db:migrate": "npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
     "db:migrate:undo": "npx sequelize-cli db:seed:undo:all && npx sequelize-cli db:migrate:undo:all",
+    "db:first:migrate": "npm run db:drop && npm run db:create && npm run db:migrate",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ."
   },

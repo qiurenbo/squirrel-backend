@@ -1,8 +1,7 @@
 "use strict";
-module.exports = (sequelize, DataTypes) => {
-  const Addr = sequelize.define(
-    "Addr",
-    {
+module.exports = {
+  up: (queryInterface, Sequelize) => {
+    return queryInterface.createTable("Operators", {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -12,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      addr: {
+      department: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -20,15 +19,17 @@ module.exports = (sequelize, DataTypes) => {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      type: {
-        type: Sequelize.STRING,
+      createdAt: {
         allowNull: false,
+        type: Sequelize.DATE,
       },
-    },
-    {}
-  );
-  Addr.associate = function (models) {
-    // associations can be defined here
-  };
-  return Addr;
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+    });
+  },
+  down: (queryInterface, Sequelize) => {
+    return queryInterface.dropTable("Operators");
+  },
 };
