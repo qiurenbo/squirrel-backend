@@ -3,10 +3,31 @@ module.exports = (sequelize, DataTypes) => {
   const Operator = sequelize.define(
     "Operator",
     {
-      id: DataTypes.STRING,
-      name: DataTypes.STRING,
-      department: DataTypes.STRING,
-      tel: DataTypes.STRING,
+      id: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true,
+      },
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      department: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      tel: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
     },
     {}
   );

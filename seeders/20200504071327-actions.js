@@ -15,13 +15,13 @@ module.exports = {
       "Actions",
       [
         {
-          id: uuidv4(),
+          id: "181d4a19-49a9-475e-bfdc-13f7e597eb4e",
           name: "重新启动",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          id: uuidv4(),
+          id: "e494ed3e-b65d-4c5d-9f74-8e34ecb61dae",
           name: "重新安装",
           createdAt: new Date(),
           updatedAt: new Date(),

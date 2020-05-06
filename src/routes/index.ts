@@ -1,5 +1,5 @@
 import * as Router from "koa-router";
-import OrderRouter from "./order/order.router";
+import OrderRouter from "./order";
 import AddrRouter from "./addr.router";
 import AccountRouter from "./account.router";
 import LoginRouter from "./login.router";

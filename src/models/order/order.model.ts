@@ -14,6 +14,30 @@ Order.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
+    date: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    addrId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    operatorId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    actionId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    targetId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    malfunctionId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
   {
     sequelize,
@@ -22,5 +46,4 @@ Order.init(
 );
 
 Order.belongsTo(Addr);
-
 export default Order;

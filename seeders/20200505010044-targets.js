@@ -11,24 +11,24 @@ module.exports = {
         name: 'John Doe',
         isBetaMember: false
       }], {});
-    */
-
-    return queryInterface.bulkInsert(
-      "Operators",
+    */ return queryInterface.bulkInsert(
+      "Targets",
       [
         {
-          id: "42ab3c40-2a44-4c9b-b951-49a5c49922ea",
-          name: "郭云峰",
-          tel: "17838431923",
-          department: "技术部",
+          id: "ab6902ce-0987-4ae5-8d48-630412d2f5fe",
+          name: "阿尔法迪——自助借还机",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          id: "7068ef94-3aef-45cf-b4bd-7e5306501f30",
-          name: "陆志强",
-          tel: "13838421923",
-          department: "技术部",
+          id: "d6240b34-b862-4baf-866f-3416df36e834",
+          name: "TPLink——路由器",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: "a26ec00d-9dfa-43e8-8947-8098b4632b22",
+          name: "海恒——自助借还机",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -44,7 +44,10 @@ module.exports = {
 
       Example:
       return queryInterface.bulkDelete('People', null, {});
-    */
-    return queryInterface.bulkDelete("Operators", null, {});
+    */ return queryInterface.bulkDelete(
+      "Targets",
+      null,
+      {}
+    );
   },
 };

@@ -12,23 +12,24 @@ module.exports = {
         isBetaMember: false
       }], {});
     */
-
     return queryInterface.bulkInsert(
-      "Operators",
+      "Malfunctions",
       [
         {
-          id: "42ab3c40-2a44-4c9b-b951-49a5c49922ea",
-          name: "郭云峰",
-          tel: "17838431923",
-          department: "技术部",
+          id: "f6918a86-f0be-4145-84d6-a57389bddd1f",
+          name: "无法开机",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          id: "7068ef94-3aef-45cf-b4bd-7e5306501f30",
-          name: "陆志强",
-          tel: "13838421923",
-          department: "技术部",
+          id: "526f8e69-dbea-459f-9c4f-4d39630dcee6",
+          name: "界面黑屏",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: "45a21a3f-90b0-49de-8dab-5de833631ed7",
+          name: "软件闪退",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -44,7 +45,10 @@ module.exports = {
 
       Example:
       return queryInterface.bulkDelete('People', null, {});
-    */
-    return queryInterface.bulkDelete("Operators", null, {});
+    */ return queryInterface.bulkDelete(
+      "Malfunctions",
+      null,
+      {}
+    );
   },
 };

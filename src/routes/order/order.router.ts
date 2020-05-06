@@ -1,9 +1,7 @@
 import * as Router from "koa-router";
-import ActionRouter from "./action.router";
 import OrderModel from "../../models/order/order.model";
 const router = new Router();
 
-router.use("/actions", ActionRouter.routes());
 // Sequelize default use UTC time
 const cloneOrder = (order: OrderModel) => {
   return {
@@ -14,29 +12,38 @@ const cloneOrder = (order: OrderModel) => {
 const validationMiddleware = () => {
   return async (ctx: any, next: any) => {
     if (
-      !ctx.request.body.name ||
-      !ctx.request.body.order ||
-      !ctx.request.body.tel ||
-      !ctx.request.body.type
+      !ctx.request.body.date ||
+      !ctx.request.body.addrId ||
+      !ctx.request.body.operatorId ||
+      !ctx.request.body.actionId ||
+      !ctx.request.body.targetId ||
+      !ctx.request.body.malfunctionId
     ) {
       ctx.status = 400;
       ctx.body = {};
-      if (!ctx.request.body.name) {
-        ctx.body.name = "Name is required.";
+      if (!ctx.request.body.date) {
+        ctx.body.date = "Date is required.";
       }
 
-      if (!ctx.request.body.order) {
-        ctx.body.order = "Order is required.";
+      if (!ctx.request.body.addrId) {
+        ctx.body.addrId = "AddrId is required.";
       }
 
-      if (!ctx.request.body.tel) {
-        ctx.body.tel = "Tel is required.";
+      if (!ctx.request.body.operatorId) {
+        ctx.body.operatorId = "OperatorId is required.";
       }
 
-      if (!ctx.request.body.type) {
-        ctx.body.type = "Type is required.";
+      if (!ctx.request.body.actionId) {
+        ctx.body.actionId = "ActionId is required.";
       }
 
+      if (!ctx.request.body.targetId) {
+        ctx.body.targetId = "TargetId is required.";
+      }
+
+      if (!ctx.request.body.malfunctionId) {
+        ctx.body.malfunctionId = "MalfunctionId is required.";
+      }
       return;
     }
 
@@ -44,7 +51,7 @@ const validationMiddleware = () => {
   };
 };
 
-router.get("/", async (ctx, next) => {
+router.get("/", validationMiddleware(), async (ctx, next) => {
   await OrderModel.findAll().then((orders) => {
     ctx.body = orders;
   });
