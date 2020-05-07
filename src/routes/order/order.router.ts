@@ -1,11 +1,23 @@
 import * as Router from "koa-router";
-import OrderModel from "../../models/order/order.model";
+import OrderModel from "models/order/order.model";
+import Addr from "models/addr.model";
+import Malfunction from "models/order/malfunction.model";
+import Target from "models/order/target.model";
+import Action from "models/order/action.model";
+import Operator from "models/operator.model";
+import { ForeignKeyConstraintError } from "sequelize";
 const router = new Router();
 
 // Sequelize default use UTC time
 const cloneOrder = (order: OrderModel) => {
   return {
     id: order.id,
+    date: order.date,
+    addrId: order.addrId,
+    operatorId: order.operatorId,
+    actionId: order.actionId,
+    targetId: order.targetId,
+    malfunctionId: order.malfunctionId,
   };
 };
 
@@ -51,25 +63,26 @@ const validationMiddleware = () => {
   };
 };
 
-router.get("/", validationMiddleware(), async (ctx, next) => {
-  await OrderModel.findAll().then((orders) => {
+router.get("/", async (ctx, next) => {
+  await OrderModel.findAll({
+    where: {},
+    include: [Addr, Malfunction, Target, Action, Operator],
+  }).then((orders) => {
     ctx.body = orders;
   });
 });
 
 router.post("/", validationMiddleware(), async (ctx, next) => {
-  await OrderModel.findOne({ where: { name: ctx.request.body.name } }).then(
-    async (order) => {
-      if (!order) {
-        await OrderModel.create(ctx.request.body).then((order) => {
-          ctx.body = cloneOrder(order);
-        });
-      } else {
-        ctx.status = 400;
-        ctx.body = { name: "Name already exists." };
-      }
+  try {
+    await OrderModel.create(ctx.request.body).then((order) => {
+      ctx.body = cloneOrder(order);
+    });
+  } catch (error) {
+    if (error instanceof ForeignKeyConstraintError) {
+      ctx.status = 400;
+      ctx.body = { error: "ForeignKeyConstraintError" };
     }
-  );
+  }
 });
 
 router.put("/:orderId", validationMiddleware(), async (ctx, next) => {

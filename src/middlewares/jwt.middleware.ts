@@ -7,7 +7,6 @@ const authenticationMiddleware = () => {
 
       try {
         const object = jwt.verify(token, process.env.CRYPRTO_KEY);
-        await next();
       } catch (error) {
         ctx.status = 400;
 
@@ -24,6 +23,7 @@ const authenticationMiddleware = () => {
 
         return;
       }
+      await next();
     } else {
       ctx.status = 400;
       ctx.body = { error: "Token is required." };

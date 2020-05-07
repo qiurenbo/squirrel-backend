@@ -6,10 +6,10 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "dist", // TS文件编译后会放入到此文件夹内
-    "baseUrl": ".",
+    "baseUrl": "src",
     "paths": {
-      "*": ["node_modules/*", "src/types/*"]
+      "src/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*.ts"]
 }

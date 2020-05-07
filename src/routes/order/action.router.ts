@@ -1,6 +1,6 @@
 import * as Router from "koa-router";
-
-import ActionModel from "../../models/order/action.model";
+import ActionModel from "models/order/action.model";
+import { UniqueConstraintError } from "sequelize";
 const router = new Router();
 
 // Sequelize default use UTC time
@@ -34,33 +34,38 @@ router.get("/", async (ctx, next) => {
 });
 
 router.post("/", validationMiddleware(), async (ctx, next) => {
-  await ActionModel.findOne({ where: { name: ctx.request.body.name } }).then(
-    async (action) => {
-      if (!action) {
-        await ActionModel.create(ctx.request.body).then((action) => {
-          ctx.body = cloneAction(action);
-        });
-      } else {
-        ctx.status = 400;
-        ctx.body = { name: "Name already exists." };
+  await ActionModel.create(ctx.request.body)
+    .then((action) => {
+      ctx.body = cloneAction(action);
+    })
+    .catch((error) => {
+      if (error instanceof UniqueConstraintError) {
+        ctx.status = 409;
+        ctx.body = { error: "Name already exists." };
       }
-    }
-  );
+    });
 });
 
 router.put("/:actionId", validationMiddleware(), async (ctx, next) => {
-  await ActionModel.findOne({ where: { id: ctx.params.actionId } }).then(
-    async (action) => {
-      if (action) {
-        await action.update(ctx.request.body).then((action) => {
-          ctx.body = cloneAction(action);
-        });
+  await ActionModel.update(ctx.request.body, {
+    where: { id: ctx.params.actionId },
+  })
+    //https://stackoverflow.com/questions/38524938/sequelize-update-record-and-return-result
+    .then((rows) => {
+      if (rows[0] !== 0) {
+        ctx.request.body.id = ctx.params.actionId;
+        ctx.body = cloneAction(ctx.request.body);
       } else {
         ctx.status = 404;
-        ctx.body = {};
+        ctx.body = { error: "Id doesn't exist." };
       }
-    }
-  );
+    })
+    .catch((error) => {
+      if (error instanceof UniqueConstraintError) {
+        ctx.status = 409;
+        ctx.body = { error: "Name alreay exists." };
+      }
+    });
 });
 
 router.delete("/:actionId", async (ctx, next) => {

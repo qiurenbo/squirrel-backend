@@ -24,15 +24,6 @@ module.exports = {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-        {
-          id: "89d371ef-307f-4f53-a156-42311aa468e7",
-          name: "秀洲分馆",
-          addr: "中山西路887号",
-          tel: "82535008",
-          type: "分馆",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
 
         {
           id: "3f98b79b-e051-4878-9522-97bbc6a4db49",

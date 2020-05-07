@@ -12,7 +12,7 @@ module.exports = {
         isBetaMember: false
       }], {});
     */ return queryInterface.bulkInsert(
-      "Targets",
+      "Orders",
       [
         {
           id: "f34702ca-fe03-406b-b078-af4ccdf5dbe1",
@@ -22,6 +22,8 @@ module.exports = {
           actionId: "181d4a19-49a9-475e-bfdc-13f7e597eb4e",
           targetId: "a26ec00d-9dfa-43e8-8947-8098b4632b22",
           malfunctionId: "45a21a3f-90b0-49de-8dab-5de833631ed7",
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
 
         {
@@ -32,6 +34,8 @@ module.exports = {
           actionId: "181d4a19-49a9-475e-bfdc-13f7e597eb4e",
           targetId: "a26ec00d-9dfa-43e8-8947-8098b4632b22",
           malfunctionId: "45a21a3f-90b0-49de-8dab-5de833631ed7",
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
       ],
       {}

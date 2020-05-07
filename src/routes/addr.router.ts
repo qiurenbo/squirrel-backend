@@ -1,6 +1,6 @@
 import * as Router from "koa-router";
-
-import AddrModel from "../models/addr.model";
+import AddrModel from "models/addr.model";
+import { UniqueConstraintError } from "sequelize";
 const router = new Router();
 
 // Sequelize default use UTC time
@@ -54,33 +54,38 @@ router.get("/", async (ctx, next) => {
 });
 
 router.post("/", validationMiddleware(), async (ctx, next) => {
-  await AddrModel.findOne({ where: { name: ctx.request.body.name } }).then(
-    async (addr) => {
-      if (!addr) {
-        await AddrModel.create(ctx.request.body).then((addr) => {
-          ctx.body = cloneAddr(addr);
-        });
-      } else {
-        ctx.status = 400;
-        ctx.body = { name: "Name already exists." };
+  await AddrModel.create(ctx.request.body)
+    .then((addr) => {
+      ctx.body = cloneAddr(addr);
+    })
+    .catch((error) => {
+      if (error instanceof UniqueConstraintError) {
+        ctx.status = 409;
+        ctx.body = {};
+        ctx.body.error = "Addr already exists.";
       }
-    }
-  );
+    });
 });
 
 router.put("/:addrId", validationMiddleware(), async (ctx, next) => {
-  await AddrModel.findOne({ where: { id: ctx.params.addrId } }).then(
-    async (addr) => {
-      if (addr) {
-        await addr.update(ctx.request.body).then((addr) => {
-          ctx.body = cloneAddr(addr);
-        });
+  await AddrModel.update(ctx.request.body, {
+    where: { id: ctx.params.addrId },
+  })
+    .then((rows) => {
+      if (rows[0] !== 0) {
+        ctx.request.body.id = ctx.params.addrId;
+        ctx.body = cloneAddr(ctx.request.body);
       } else {
         ctx.status = 404;
-        ctx.body = {};
+        ctx.body = { error: "Addr doesn't exist." };
       }
-    }
-  );
+    })
+    .catch((error) => {
+      if (error instanceof UniqueConstraintError) {
+        ctx.status = 409;
+        ctx.body = { error: "Addr already exists." };
+      }
+    });
 });
 
 router.delete("/:addrId", async (ctx, next) => {

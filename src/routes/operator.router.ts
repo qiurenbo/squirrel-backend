@@ -1,6 +1,8 @@
 import * as Router from "koa-router";
 
 import OperatorModel from "../models/operator.model";
+import { UniqueConstraintError } from "sequelize";
+import Operator from "../models/operator.model";
 const router = new Router();
 
 // Sequelize default use UTC time
@@ -48,33 +50,37 @@ router.get("/", async (ctx, next) => {
 });
 
 router.post("/", validationMiddleware(), async (ctx, next) => {
-  await OperatorModel.findOne({ where: { name: ctx.request.body.name } }).then(
-    async (operator) => {
-      if (!operator) {
-        await OperatorModel.create(ctx.request.body).then((operator) => {
-          ctx.body = cloneOperator(operator);
-        });
-      } else {
-        ctx.status = 400;
-        ctx.body = { name: "Name already exists." };
+  await OperatorModel.create(ctx.request.body)
+    .then((operator) => {
+      ctx.body = cloneOperator(operator);
+    })
+    .catch((error) => {
+      if (error instanceof UniqueConstraintError) {
+        ctx.status = 409;
+        ctx.body = { error: "Name already exists." };
       }
-    }
-  );
+    });
 });
 
 router.put("/:operatorId", validationMiddleware(), async (ctx, next) => {
-  await OperatorModel.findOne({ where: { id: ctx.params.operatorId } }).then(
-    async (operator) => {
-      if (operator) {
-        await operator.update(ctx.request.body).then((operator) => {
-          ctx.body = cloneOperator(operator);
-        });
+  await OperatorModel.update(ctx.request.body, {
+    where: { id: ctx.params.operatorId },
+  })
+    .then((rows) => {
+      if (rows[0] !== 0) {
+        ctx.request.body.id = ctx.params.operatorId;
+        ctx.body = cloneOperator(ctx.request.body);
       } else {
         ctx.status = 404;
-        ctx.body = {};
+        ctx.body = { error: "Id doesn't exist." };
       }
-    }
-  );
+    })
+    .catch((error) => {
+      if (error instanceof UniqueConstraintError) {
+        ctx.status = 409;
+        ctx.body = { error: "Operator already exists." };
+      }
+    });
 });
 
 router.delete("/:operatorId", async (ctx, next) => {

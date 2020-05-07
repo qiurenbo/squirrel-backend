@@ -1,6 +1,5 @@
 import * as Router from "koa-router";
-
-import MalfunctionModel from "../../models/order/malfunction.model";
+import MalfunctionModel from "models/order/malfunction.model";
 const router = new Router();
 
 // Sequelize default use UTC time
@@ -45,7 +44,7 @@ router.post("/", validationMiddleware(), async (ctx, next) => {
       );
     } else {
       ctx.status = 400;
-      ctx.body = { name: "Name already exists." };
+      ctx.body = { error: "Name already exists." };
     }
   });
 });

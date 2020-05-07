@@ -1,11 +1,11 @@
 import * as Router from "koa-router";
 
-import AccountModel from "../models/Account.model";
-import { v4 as uuidv4 } from "uuid";
+import AccountModel from "models/Account.model";
+
 import { UniqueConstraintError } from "sequelize";
 
-import authenticationMiddleware from "../middlewares/jwt.middleware";
-import { cryptoPassword } from "../utils";
+import authenticationMiddleware from "middlewares/jwt.middleware";
+import { cryptoPassword } from "utils";
 const router = new Router();
 
 const cloneAccountWithoutPassword = (account: AccountModel) => {
@@ -45,21 +45,19 @@ const validationMiddleware = () => {
 };
 
 router.post("/", validationMiddleware(), async (ctx, next) => {
-  ctx.request.body.id = uuidv4();
   ctx.request.body.password = cryptoPassword(ctx.request.body.password);
 
-  await AccountModel.create(ctx.request.body).then(
-    (Account) => {
+  await AccountModel.create(ctx.request.body)
+    .then((Account) => {
       ctx.body = cloneAccountWithoutPassword(Account);
-    },
-    (error) => {
+    })
+    .catch((error) => {
       if (error instanceof UniqueConstraintError) {
         ctx.status = 409;
         ctx.body = {};
-        ctx.body.email = "Email already exists.";
+        ctx.body.error = "Email already exists.";
       }
-    }
-  );
+    });
 });
 
 router.put(
@@ -67,19 +65,32 @@ router.put(
   authenticationMiddleware(),
   validationMiddleware(),
   async (ctx, next) => {
-    await AccountModel.findOne({ where: { id: ctx.params.id } }).then(
-      async (Account) => {
-        if (Account) {
-          Account.password = cryptoPassword(Account.password);
-          await Account.update(Account).then((Account) => {
-            ctx.body = cloneAccountWithoutPassword(Account);
-          });
+    await AccountModel.update(
+      {
+        username: ctx.request.body.username,
+        email: ctx.request.body.email,
+        password: cryptoPassword(ctx.request.body.password),
+      },
+      { where: { id: ctx.params.id } }
+    )
+      .then((rows) => {
+        // no rows effected
+        if (rows[0] !== 0) {
+          ctx.request.body.id = ctx.params.id;
+          ctx.body = cloneAccountWithoutPassword(ctx.request.body);
         } else {
           ctx.status = 404;
           ctx.body = {};
+          ctx.body.error = "Id doesn't exist.";
         }
-      }
-    );
+      })
+      .catch((error) => {
+        if (error instanceof UniqueConstraintError) {
+          ctx.status = 409;
+          ctx.body = {};
+          ctx.body.error = "Email already exists.";
+        }
+      });
   }
 );
 
