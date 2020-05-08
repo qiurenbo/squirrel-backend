@@ -63,7 +63,7 @@ router.put("/:actionId", validationMiddleware(), async (ctx, next) => {
     .catch((error) => {
       if (error instanceof UniqueConstraintError) {
         ctx.status = 409;
-        ctx.body = { error: "Name alreay exists." };
+        ctx.body = { error: "Name already exists." };
       }
     });
 });

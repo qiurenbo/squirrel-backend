@@ -1,6 +1,7 @@
 import * as Router from "koa-router";
 
 import TargetModel from "models/order/target.model";
+import { UniqueConstraintError } from "sequelize";
 const router = new Router();
 
 // Sequelize default use UTC time
@@ -34,33 +35,38 @@ router.get("/", async (ctx, next) => {
 });
 
 router.post("/", validationMiddleware(), async (ctx, next) => {
-  await TargetModel.findOne({ where: { name: ctx.request.body.name } }).then(
-    async (target) => {
-      if (!target) {
-        await TargetModel.create(ctx.request.body).then((target) => {
-          ctx.body = cloneTarget(target);
-        });
-      } else {
-        ctx.status = 400;
+  await TargetModel.create(ctx.request.body)
+    .then((target) => {
+      ctx.body = cloneTarget(target);
+    })
+    .catch((error) => {
+      if (error instanceof UniqueConstraintError) {
         ctx.body = { error: "Name already exists." };
+        ctx.status = 409;
       }
-    }
-  );
+    });
 });
 
 router.put("/:targetId", validationMiddleware(), async (ctx, next) => {
-  await TargetModel.findOne({ where: { id: ctx.params.targetId } }).then(
-    async (target) => {
-      if (target) {
-        await target.update(ctx.request.body).then((target) => {
-          ctx.body = cloneTarget(target);
-        });
+  await TargetModel.update(ctx.request.body, {
+    where: { id: ctx.params.targetId },
+  })
+    .then((rows) => {
+      // If one rows effected
+      if (rows[0] !== 0) {
+        ctx.request.body.id = ctx.params.targetId;
+        ctx.body = cloneTarget(ctx.request.body);
       } else {
+        ctx.body = { error: "Id doesn't exist." };
         ctx.status = 404;
-        ctx.body = {};
       }
-    }
-  );
+    })
+    .catch((error) => {
+      if (error instanceof UniqueConstraintError) {
+        ctx.body = { error: "Name already exists." };
+        ctx.status = 409;
+      }
+    });
 });
 
 router.delete("/:targetId", async (ctx, next) => {

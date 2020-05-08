@@ -1,5 +1,6 @@
 import * as Router from "koa-router";
 import MalfunctionModel from "models/order/malfunction.model";
+import { UniqueConstraintError } from "sequelize";
 const router = new Router();
 
 // Sequelize default use UTC time
@@ -33,35 +34,38 @@ router.get("/", async (ctx, next) => {
 });
 
 router.post("/", validationMiddleware(), async (ctx, next) => {
-  await MalfunctionModel.findOne({
-    where: { name: ctx.request.body.name },
-  }).then(async (malfunction: any) => {
-    if (!malfunction) {
-      await MalfunctionModel.create(ctx.request.body).then(
-        (malfunction: any) => {
-          ctx.body = cloneMalfunction(malfunction);
-        }
-      );
-    } else {
-      ctx.status = 400;
-      ctx.body = { error: "Name already exists." };
-    }
-  });
+  await MalfunctionModel.create(ctx.request.body)
+    .then((malfunction: any) => {
+      ctx.body = cloneMalfunction(malfunction);
+    })
+    .catch((error) => {
+      if (error instanceof UniqueConstraintError) {
+        ctx.status = 409;
+        ctx.body = { error: "Name already exists." };
+      }
+    });
 });
 
 router.put("/:malfunctionId", validationMiddleware(), async (ctx, next) => {
-  await MalfunctionModel.findOne({
+  await MalfunctionModel.update(ctx.request.body, {
     where: { id: ctx.params.malfunctionId },
-  }).then(async (malfunction: any) => {
-    if (malfunction) {
-      await malfunction.update(ctx.request.body).then((malfunction: any) => {
-        ctx.body = cloneMalfunction(malfunction);
-      });
-    } else {
-      ctx.status = 404;
-      ctx.body = {};
-    }
-  });
+  })
+    .then((rows) => {
+      // if rows effected
+      if (rows[0] !== 0) {
+        ctx.request.body.id = ctx.params.malfunctionId;
+        ctx.body = cloneMalfunction(ctx.request.body);
+      } else {
+        ctx.status = 404;
+        ctx.body = { error: "Id doesn't exist." };
+      }
+    })
+    .catch((error) => {
+      if (error instanceof UniqueConstraintError) {
+        ctx.body = { error: "Name already exists." };
+        ctx.status = 409;
+      }
+    });
 });
 
 router.delete("/:malfunctionId", async (ctx, next) => {

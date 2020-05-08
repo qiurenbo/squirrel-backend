@@ -5,7 +5,7 @@ import Malfunction from "models/order/malfunction.model";
 import Target from "models/order/target.model";
 import Action from "models/order/action.model";
 import Operator from "models/operator.model";
-import { ForeignKeyConstraintError } from "sequelize";
+import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
 const router = new Router();
 
 // Sequelize default use UTC time
@@ -73,31 +73,38 @@ router.get("/", async (ctx, next) => {
 });
 
 router.post("/", validationMiddleware(), async (ctx, next) => {
-  try {
-    await OrderModel.create(ctx.request.body).then((order) => {
+  await OrderModel.create(ctx.request.body)
+    .then((order) => {
       ctx.body = cloneOrder(order);
+    })
+    .catch((error) => {
+      if (error instanceof ForeignKeyConstraintError) {
+        ctx.status = 400;
+        ctx.body = { error: "ForeignKey doesn't exist." };
+      }
     });
-  } catch (error) {
-    if (error instanceof ForeignKeyConstraintError) {
-      ctx.status = 400;
-      ctx.body = { error: "ForeignKeyConstraintError" };
-    }
-  }
 });
 
 router.put("/:orderId", validationMiddleware(), async (ctx, next) => {
-  await OrderModel.findOne({ where: { id: ctx.params.orderId } }).then(
-    async (order) => {
-      if (order) {
-        await order.update(ctx.request.body).then((order) => {
-          ctx.body = cloneOrder(order);
-        });
+  await OrderModel.update(ctx.request.body, {
+    where: { id: ctx.params.orderId },
+  })
+    .then((rows) => {
+      //if rows effected
+      if (rows[0] !== 0) {
+        ctx.request.body.id = ctx.params.orderId;
+        ctx.body = cloneOrder(ctx.request.body);
       } else {
         ctx.status = 404;
-        ctx.body = {};
+        ctx.body = { error: "Id doesn't exists." };
       }
-    }
-  );
+    })
+    .catch((error) => {
+      if (error instanceof ForeignKeyConstraintError) {
+        ctx.status = 400;
+        ctx.body = { error: "ForeignKey doesn't exist." };
+      }
+    });
 });
 
 router.delete("/:orderId", async (ctx, next) => {
