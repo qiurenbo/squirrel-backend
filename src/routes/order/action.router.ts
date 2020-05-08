@@ -29,6 +29,7 @@ const validationMiddleware = () => {
 
 router.get("/", async (ctx, next) => {
   await ActionModel.findAll().then((actions) => {
+    ctx.set("X-Total-Count", actions.length + "");
     ctx.body = actions;
   });
 });

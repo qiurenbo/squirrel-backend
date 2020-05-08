@@ -68,6 +68,7 @@ router.get("/", async (ctx, next) => {
     where: {},
     include: [Addr, Malfunction, Target, Action, Operator],
   }).then((orders) => {
+    ctx.set("X-Total-Count", orders.length + "");
     ctx.body = orders;
   });
 });

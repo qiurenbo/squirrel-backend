@@ -15,6 +15,18 @@ const cloneAccountWithoutPassword = (account: AccountModel) => {
     email: account.email,
   };
 };
+const cloneAccountsWithoutPassword = (accounts: AccountModel[]) => {
+  let array: {
+    id: string;
+    username: string;
+    email: string;
+  }[] = [];
+
+  accounts.forEach((account) => {
+    array.push(cloneAccountWithoutPassword(account));
+  });
+  return array;
+};
 
 const validationMiddleware = () => {
   return async (ctx: any, next: any) => {
@@ -43,6 +55,13 @@ const validationMiddleware = () => {
     await next();
   };
 };
+
+router.get("/", async (ctx, next) => {
+  await AccountModel.findAll({ where: {} }).then((accounts) => {
+    ctx.set("X-Total-Count", accounts.length + "");
+    ctx.body = cloneAccountsWithoutPassword(accounts);
+  });
+});
 
 router.post("/", validationMiddleware(), async (ctx, next) => {
   ctx.request.body.password = cryptoPassword(ctx.request.body.password);

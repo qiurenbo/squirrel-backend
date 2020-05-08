@@ -30,6 +30,7 @@ const validationMiddleware = () => {
 
 router.get("/", async (ctx, next) => {
   await TargetModel.findAll().then((targets) => {
+    ctx.set("X-Total-Count", targets.length + "");
     ctx.body = targets;
   });
 });
