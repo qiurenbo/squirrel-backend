@@ -3,13 +3,14 @@ import * as bodyparser from "koa-bodyparser";
 import apiRouter from "./routes";
 import sequelize from "./config/mariadb";
 import * as cors from "@koa/cors";
+import paginationMiddleware from "middlewares/pagination.middleware";
 const app = new Koa();
 
 app.use(cors());
 app.use(bodyparser());
+app.use(paginationMiddleware());
 app.use(apiRouter.routes());
 app.listen(3000);
-
 sequelize
   .authenticate()
   .then(() => {

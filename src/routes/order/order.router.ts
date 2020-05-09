@@ -64,10 +64,8 @@ const validationMiddleware = () => {
 };
 
 router.get("/", async (ctx, next) => {
-  await OrderModel.findAll({
-    where: {},
-    include: [Addr, Malfunction, Target, Action, Operator],
-  }).then((orders) => {
+  ctx.query.pagination.include = [Addr, Malfunction, Target, Action, Operator];
+  await OrderModel.findAll(ctx.query.pagination).then((orders) => {
     ctx.set("X-Total-Count", orders.length + "");
     ctx.body = orders;
   });

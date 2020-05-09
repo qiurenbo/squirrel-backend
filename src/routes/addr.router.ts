@@ -48,7 +48,7 @@ const validationMiddleware = () => {
 };
 
 router.get("/", async (ctx, next) => {
-  await AddrModel.findAll().then((addrs) => {
+  await AddrModel.findAll(ctx.query.pagination).then((addrs) => {
     ctx.set("X-Total-Count", addrs.length + "");
     ctx.body = addrs;
   });
