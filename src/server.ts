@@ -6,7 +6,7 @@ import * as cors from "@koa/cors";
 import paginationMiddleware from "middlewares/pagination.middleware";
 const app = new Koa();
 
-app.use(cors());
+app.use(cors({ exposeHeaders: ["X-Total-Count"] }));
 app.use(bodyparser());
 app.use(paginationMiddleware());
 app.use(apiRouter.routes());

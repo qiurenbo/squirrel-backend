@@ -44,8 +44,10 @@ const validationMiddleware = () => {
 };
 
 router.get("/", async (ctx, next) => {
-  await OperatorModel.findAll(ctx.query.pagination).then((operators) => {
+  await OperatorModel.findAll().then((operators) => {
     ctx.set("X-Total-Count", operators.length + "");
+  });
+  await OperatorModel.findAll(ctx.query.pagination).then((operators) => {
     ctx.body = operators;
   });
 });

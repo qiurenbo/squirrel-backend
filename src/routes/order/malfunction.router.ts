@@ -28,9 +28,11 @@ const validationMiddleware = () => {
 };
 
 router.get("/", async (ctx, next) => {
+  await MalfunctionModel.findAll().then((malfunctions: any) => {
+    ctx.set("X-Total-Count", malfunctions.length + "");
+  });
   await MalfunctionModel.findAll(ctx.query.pagination).then(
     (malfunctions: any) => {
-      ctx.set("X-Total-Count", malfunctions.length + "");
       ctx.body = malfunctions;
     }
   );

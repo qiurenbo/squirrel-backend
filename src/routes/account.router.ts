@@ -57,8 +57,10 @@ const validationMiddleware = () => {
 };
 
 router.get("/", async (ctx, next) => {
-  await AccountModel.findAll(ctx.query.pagination).then((accounts) => {
+  await AccountModel.findAll().then((accounts) => {
     ctx.set("X-Total-Count", accounts.length + "");
+  });
+  await AccountModel.findAll(ctx.query.pagination).then((accounts) => {
     ctx.body = cloneAccountsWithoutPassword(accounts);
   });
 });
