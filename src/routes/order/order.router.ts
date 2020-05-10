@@ -5,7 +5,11 @@ import Malfunction from "models/order/malfunction.model";
 import Target from "models/order/target.model";
 import Action from "models/order/action.model";
 import Operator from "models/operator.model";
-import { ForeignKeyConstraintError, UniqueConstraintError } from "sequelize";
+import {
+  ForeignKeyConstraintError,
+  UniqueConstraintError,
+  Op,
+} from "sequelize";
 const router = new Router();
 
 // Sequelize default use UTC time
@@ -68,6 +72,30 @@ router.get("/", async (ctx, next) => {
     ctx.set("X-Total-Count", orders.length + "");
   });
   ctx.query.pagination.include = [Addr, Malfunction, Target, Action, Operator];
+  ctx.query.pagination.where = {};
+  if (ctx.query.startDate && ctx.query.endDate) {
+    ctx.query.pagination.where.date = {
+      [Op.between]: [ctx.query.startDate, ctx.query.endDate],
+    };
+  }
+
+  if (ctx.query.addrId) {
+    ctx.query.pagination.where.addrId = ctx.query.addrId;
+  }
+  if (ctx.query.operatorId) {
+    ctx.query.pagination.where.operatorId = ctx.query.operatorId;
+  }
+
+  if (ctx.query.actionId) {
+    ctx.query.pagination.where.actionId = ctx.query.actionId;
+  }
+  if (ctx.query.targetId) {
+    ctx.query.pagination.where.actionId = ctx.query.targetId;
+  }
+  if (ctx.query.malfunctionId) {
+    ctx.query.pagination.where.malfunctionId = ctx.query.malfunctionId;
+  }
+
   await OrderModel.findAll(ctx.query.pagination).then((orders) => {
     ctx.body = orders;
   });
