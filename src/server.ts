@@ -3,7 +3,7 @@ import * as bodyparser from "koa-bodyparser";
 import apiRouter from "./routes";
 import sequelize from "./config/mariadb";
 import * as cors from "@koa/cors";
-import paginationMiddleware from "middlewares/pagination.middleware";
+import paginationMiddleware from "./middlewares/pagination.middleware";
 const app = new Koa();
 
 app.use(cors({ exposeHeaders: ["X-Total-Count"] }));

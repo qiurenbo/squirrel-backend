@@ -1,10 +1,10 @@
 import * as Router from "koa-router";
-import OrderModel from "models/order/order.model";
-import Addr from "models/addr.model";
-import Malfunction from "models/order/malfunction.model";
-import Target from "models/order/target.model";
-import Action from "models/order/action.model";
-import Operator from "models/operator.model";
+import OrderModel from "../../models/order/order.model";
+import Addr from "../../models/addr.model";
+import Malfunction from "../../models/order/malfunction.model";
+import Target from "../../models/order/target.model";
+import Action from "../../models/order/action.model";
+import Operator from "../../models/operator.model";
 import {
   ForeignKeyConstraintError,
   UniqueConstraintError,
@@ -90,7 +90,7 @@ router.get("/", async (ctx, next) => {
     ctx.query.pagination.where.actionId = ctx.query.actionId;
   }
   if (ctx.query.targetId) {
-    ctx.query.pagination.where.actionId = ctx.query.targetId;
+    ctx.query.pagination.where.targetId = ctx.query.targetId;
   }
   if (ctx.query.malfunctionId) {
     ctx.query.pagination.where.malfunctionId = ctx.query.malfunctionId;

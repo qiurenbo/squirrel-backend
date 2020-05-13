@@ -1,7 +1,7 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
   const Account = sequelize.define(
-    "Account",
+    "account",
     {
       id: {
         type: DataTypes.UUID,

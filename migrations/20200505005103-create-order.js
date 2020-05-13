@@ -16,7 +16,7 @@ module.exports = {
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
         references: {
-          model: "Addrs",
+          model: "addrs",
           key: "id",
         },
       },
@@ -25,7 +25,7 @@ module.exports = {
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
         references: {
-          model: "Operators",
+          model: "operators",
           key: "id",
         },
       },
@@ -35,7 +35,7 @@ module.exports = {
         allowNull: false,
         //https://stackoverflow.com/questions/60338378/sequelize-migration-fails-with-errno-150-foreign-key-constraint-is-incorrectly
         references: {
-          model: "Actions",
+          model: "actions",
           key: "id",
         },
       },
@@ -44,7 +44,7 @@ module.exports = {
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
         references: {
-          model: "Targets",
+          model: "targets",
           key: "id",
         },
       },
@@ -53,7 +53,7 @@ module.exports = {
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
         references: {
-          model: "Malfunctions",
+          model: "malfunctions",
           key: "id",
         },
       },

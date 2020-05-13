@@ -1,5 +1,5 @@
 import * as Router from "koa-router";
-import ActionModel from "models/order/action.model";
+import ActionModel from "../../models/order/action.model";
 import { UniqueConstraintError } from "sequelize";
 const router = new Router();
 

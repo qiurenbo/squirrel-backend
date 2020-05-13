@@ -14,7 +14,7 @@ module.exports = {
     */
 
     return queryInterface.bulkInsert(
-      "Operators",
+      "operators",
       [
         {
           id: "42ab3c40-2a44-4c9b-b951-49a5c49922ea",
@@ -45,6 +45,6 @@ module.exports = {
       Example:
       return queryInterface.bulkDelete('People', null, {});
     */
-    return queryInterface.bulkDelete("Operators", null, {});
+    return queryInterface.bulkDelete("operators", null, {});
   },
 };

@@ -1,7 +1,7 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
   const Operator = sequelize.define(
-    "Operator",
+    "operator",
     {
       id: {
         type: Sequelize.UUID,

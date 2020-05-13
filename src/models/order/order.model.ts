@@ -1,10 +1,10 @@
 import { Model, DataTypes } from "sequelize";
 import Addr from "../addr.model";
-import sequelize from "config/mariadb";
+import sequelize from "../../config/mariadb";
 import Malfunction from "./malfunction.model";
 import Target from "./target.model";
 import Action from "./action.model";
-import Operator from "models/operator.model";
+import Operator from "../operator.model";
 class Order extends Model {
   id: string;
   date: string;

@@ -1,5 +1,5 @@
 import * as Router from "koa-router";
-import MalfunctionModel from "models/order/malfunction.model";
+import MalfunctionModel from "../../models/order/malfunction.model";
 import { UniqueConstraintError } from "sequelize";
 const router = new Router();
 

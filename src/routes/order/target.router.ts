@@ -1,6 +1,6 @@
 import * as Router from "koa-router";
 
-import TargetModel from "models/order/target.model";
+import TargetModel from "../../models/order/target.model";
 import { UniqueConstraintError } from "sequelize";
 const router = new Router();
 

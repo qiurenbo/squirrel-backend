@@ -13,7 +13,7 @@ module.exports = {
       }], {});
     */
     return queryInterface.bulkInsert(
-      "Addrs",
+      "addrs",
       [
         {
           id: "fe71e64f-a583-47a0-84b3-828f5b0f0b14",
@@ -47,7 +47,7 @@ module.exports = {
       Example:
       return queryInterface.bulkDelete('People', null, {});
     */ return queryInterface.bulkDelete(
-      "Addrs",
+      "addrs",
       null,
       {}
     );

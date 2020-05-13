@@ -12,7 +12,7 @@ module.exports = {
         isBetaMember: false
       }], {});
     */ return queryInterface.bulkInsert(
-      "Actions",
+      "actions",
       [
         {
           id: "181d4a19-49a9-475e-bfdc-13f7e597eb4e",
@@ -39,6 +39,6 @@ module.exports = {
       Example:
       return queryInterface.bulkDelete('People', null, {});
     */
-    return queryInterface.bulkDelete("Actions", null, {});
+    return queryInterface.bulkDelete("actions", null, {});
   },
 };

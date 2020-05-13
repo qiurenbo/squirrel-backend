@@ -1,11 +1,11 @@
 import * as Router from "koa-router";
 
-import AccountModel from "models/Account.model";
+import AccountModel from "../models/account.model";
 
 import { UniqueConstraintError } from "sequelize";
 
-import authenticationMiddleware from "middlewares/jwt.middleware";
-import { cryptoPassword } from "utils";
+import authenticationMiddleware from "../middlewares/jwt.middleware";
+import { cryptoPassword } from "../utils";
 const router = new Router();
 
 const cloneAccountWithoutPassword = (account: AccountModel) => {

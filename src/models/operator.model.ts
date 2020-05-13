@@ -33,7 +33,7 @@ Operator.init(
 
   {
     sequelize,
-    tableName: "Operators",
+    tableName: "operators",
   }
 );
 

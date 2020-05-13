@@ -1,7 +1,7 @@
 "use strict";
 module.exports = (sequelize, DataTypes) => {
   const Addr = sequelize.define(
-    "Addr",
+    "addr",
     {
       id: {
         type: Sequelize.UUID,

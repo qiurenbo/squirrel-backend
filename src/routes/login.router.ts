@@ -1,6 +1,6 @@
-import AccountModel from "models/Account.model";
+import AccountModel from "../models/account.model";
 import * as Router from "koa-router";
-import { cryptoPassword } from "utils";
+import { cryptoPassword } from "../utils";
 import * as jwt from "jsonwebtoken";
 const router = new Router();
 const loginValidationMiddleware = () => {
