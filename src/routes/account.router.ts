@@ -28,16 +28,16 @@ const cloneAccountsWithoutPassword = (accounts: AccountModel[]) => {
   return array;
 };
 
-const validationMiddleware = () => {
+const validationMiddleware = (passwdRequired = true) => {
   return async (ctx: any, next: any) => {
     if (
-      !ctx.request.body.password ||
+      (!ctx.request.body.password && passwdRequired) ||
       !ctx.request.body.username ||
       !ctx.request.body.email
     ) {
       ctx.status = 400;
       ctx.body = {};
-      if (!ctx.request.body.password) {
+      if (!ctx.request.body.password && passwdRequired) {
         ctx.body.password = "Password is required.";
       }
 
@@ -81,39 +81,36 @@ router.post("/", validationMiddleware(), async (ctx, next) => {
     });
 });
 
-router.put(
-  "/:id",
-  authenticationMiddleware(),
-  validationMiddleware(),
-  async (ctx, next) => {
-    await AccountModel.update(
-      {
-        username: ctx.request.body.username,
-        email: ctx.request.body.email,
-        password: cryptoPassword(ctx.request.body.password),
-      },
-      { where: { id: ctx.params.id } }
-    )
-      .then((rows) => {
-        // no rows effected
-        if (rows[0] !== 0) {
-          ctx.request.body.id = ctx.params.id;
-          ctx.body = cloneAccountWithoutPassword(ctx.request.body);
-        } else {
-          ctx.status = 404;
-          ctx.body = {};
-          ctx.body.error = "Id doesn't exist.";
-        }
-      })
-      .catch((error) => {
-        if (error instanceof UniqueConstraintError) {
-          ctx.status = 409;
-          ctx.body = {};
-          ctx.body.error = "Email already exists.";
-        }
-      });
+router.put("/:id", validationMiddleware(false), async (ctx, next) => {
+  let update: any = {
+    username: ctx.request.body.username,
+    email: ctx.request.body.email,
+  };
+
+  if (ctx.request.body.password) {
+    update.password = cryptoPassword(ctx.request.body.password);
   }
-);
+
+  await AccountModel.update(update, { where: { id: ctx.params.id } })
+    .then((rows) => {
+      // no rows effected
+      if (rows[0] !== 0) {
+        ctx.request.body.id = ctx.params.id;
+        ctx.body = cloneAccountWithoutPassword(ctx.request.body);
+      } else {
+        ctx.status = 404;
+        ctx.body = {};
+        ctx.body.error = "Id doesn't exist.";
+      }
+    })
+    .catch((error) => {
+      if (error instanceof UniqueConstraintError) {
+        ctx.status = 409;
+        ctx.body = {};
+        ctx.body.error = "Email already exists.";
+      }
+    });
+});
 
 router.delete("/:id", authenticationMiddleware(), async (ctx, next) => {
   await AccountModel.destroy({
