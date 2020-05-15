@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
       },
+      remarks: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
       malfunctionId: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,

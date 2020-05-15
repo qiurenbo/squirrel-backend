@@ -22,6 +22,7 @@ module.exports = {
           actionId: "181d4a19-49a9-475e-bfdc-13f7e597eb4e",
           targetId: "a26ec00d-9dfa-43e8-8947-8098b4632b22",
           malfunctionId: "f6918a86-f0be-4145-84d6-a57389bddd1f",
+          remarks: "备注信息",
           createdAt: new Date(),
           updatedAt: new Date(),
         },

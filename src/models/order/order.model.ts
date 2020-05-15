@@ -51,6 +51,10 @@ Order.init(
       defaultValue: DataTypes.UUIDV4,
       allowNull: false,
     },
+    remarks: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
   },
   {
     sequelize,
