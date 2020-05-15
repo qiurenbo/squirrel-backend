@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                docker.build(["-t","squirrel-frontend")
+                docker.build("-t squirrel-frontend")
 
             }
         }
