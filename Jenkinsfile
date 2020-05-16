@@ -26,7 +26,7 @@ pipeline {
             }
         }
 
-        stage('Push to harbor') {
+        stage('Pull from harbor') {
             steps {
 
                 script {
