@@ -21,7 +21,6 @@ pipeline {
                 sh "docker login 192.168.33.12 -u admin -p Harbor12345"
                 sh "docker tag squirrel-backend 192.168.33.12/library/squirrel-backend"
                 sh "docker push 192.168.33.12/library/squirrel-backend"
-                sh "docker rmi --force squirrel-backend"
                 sh "docker rmi --force 192.168.33.12/library/squirrel-backend"
             }
         }
@@ -32,7 +31,7 @@ pipeline {
                 script {
                     def remote = [:]
                     remote.name = 'test'
-                    remote.host = '192.168.33.12'
+                    remote.host = '192.168.33.10'
                     remote.user = 'root'
                     remote.port = 22
                     remote.password = 'vagrant'
