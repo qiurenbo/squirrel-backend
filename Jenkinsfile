@@ -39,7 +39,7 @@ pipeline {
 
                     sshCommand remote: remote, command: "docker stop  squirrel-backend"
                     sshCommand remote: remote, command: "docker rm squirrel-backend"
-                    sshCommand remote: remote, command: "docker rmi --force 192.168.33.12/library/squirrel-backen"
+                    sshCommand remote: remote, command: "docker rmi --force 192.168.33.12/library/squirrel-backend"
 
                     sshCommand remote: remote, command: "docker login 192.168.33.12 -u admin -p Harbor12345"
                 
