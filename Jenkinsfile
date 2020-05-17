@@ -34,7 +34,7 @@ pipeline {
                     remote.host = '192.168.33.10'
                     remote.user = 'root'
                     remote.port = 22
-                    remote.password = 'vagrant'
+                    //remote.password = 'vagrant'
                     remote.allowAnyHosts = true
 
                     sshCommand remote: remote, command: "if [ \$(docker ps | grep -c \"squirrel-backend\") == 1 ]; then docker stop  squirrel-backend; fi"
