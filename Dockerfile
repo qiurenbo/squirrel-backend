@@ -13,9 +13,6 @@ COPY package.json ./
 # Install dependecies
 RUN npm install
 
-# Install PM2
-RUN npm i -g pm2
-
 # Get all the code needed to run the app
 COPY . /usr/src/app
 
@@ -34,6 +31,9 @@ WORKDIR /usr/src/app
 COPY --from=node /usr/src/app/dist ./dist
 
 COPY --from=node /usr/src/app/ecosystem.config.js ./
+
+# Install PM2
+RUN npm i -g pm2
 
 # Expose the port the app runs in
 EXPOSE 3000
