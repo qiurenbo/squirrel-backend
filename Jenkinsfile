@@ -41,6 +41,9 @@ pipeline {
                             usernameVariable: 'userName')
                         ])
                     {
+                        remote.user = userName
+                        remote.identityFile = identity
+
                         sshCommand remote: remote, command: "if [ \$(docker ps | grep -c \"squirrel-backend\") == 1 ]; then docker stop  squirrel-backend; fi"
                         sshCommand remote: remote, command: "if [ \$(docker ps -a | grep -c \"squirrel-backend\") == 1 ]; then docker rm squirrel-backend; fi"
                         sshCommand remote: remote, command: "if [ \$(docker images | grep -c \"192.168.33.12/library/squirrel-backend\") == 1 ]; then docker rmi --force 192.168.33.12/library/squirrel-backend; fi"
