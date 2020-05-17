@@ -31,9 +31,7 @@ pipeline {
                     def remote = [:]
                     remote.name = 'test'
                     remote.host = '192.168.33.10'
-                    //remote.user = 'root'
                     remote.port = 22
-                    // remote.password = 'vagrant'
                     remote.allowAnyHosts = true
                     withCredentials([
                         sshUserPrivateKey(
