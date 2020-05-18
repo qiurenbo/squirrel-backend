@@ -18,7 +18,7 @@ pipeline {
 
         stage('Push to harbor') {
             steps {
-                sh "docker login10.1.5.76 -u admin -p Harbor12345"
+                sh "docker login 10.1.5.76 -u admin -p Harbor12345"
                 sh "docker tag squirrel-backend10.1.5.76/library/squirrel-backend"
                 sh "docker push10.1.5.76/library/squirrel-backend"
                 sh "docker rmi --force10.1.5.76/library/squirrel-backend"
