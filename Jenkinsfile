@@ -19,9 +19,9 @@ pipeline {
         stage('Push to harbor') {
             steps {
                 sh "docker login 10.1.5.76 -u admin -p Harbor12345"
-                sh "docker tag squirrel-backend10.1.5.76/library/squirrel-backend"
-                sh "docker push10.1.5.76/library/squirrel-backend"
-                sh "docker rmi --force10.1.5.76/library/squirrel-backend"
+                sh "docker tag squirrel-backend 10.1.5.76/library/squirrel-backend"
+                sh "docker push 10.1.5.76/library/squirrel-backend"
+                sh "docker rmi --force 10.1.5.76/library/squirrel-backend"
             }
         }
 
@@ -46,13 +46,13 @@ pipeline {
 
                         sshCommand remote: remote, command: "if [ \$(docker ps | grep -c \"squirrel-backend\") == 1 ]; then docker stop  squirrel-backend; fi"
                         sshCommand remote: remote, command: "if [ \$(docker ps -a | grep -c \"squirrel-backend\") == 1 ]; then docker rm squirrel-backend; fi"
-                        sshCommand remote: remote, command: "if [ \$(docker images | grep -c \"192.168.33.12/library/squirrel-backend\") == 1 ]; then docker rmi --force10.1.5.76/library/squirrel-backend; fi"
+                        sshCommand remote: remote, command: "if [ \$(docker images | grep -c \"10.1.5.76/library/squirrel-backend\") == 1 ]; then docker rmi --force 10.1.5.76/library/squirrel-backend; fi"
 
-                        sshCommand remote: remote, command: "docker login10.1.5.76 -u admin -p Harbor12345"
+                        sshCommand remote: remote, command: "docker login 10.1.5.76 -u admin -p Harbor12345"
                     
-                        sshCommand remote: remote, command: "docker pull10.1.5.76/library/squirrel-backend"
+                        sshCommand remote: remote, command: "docker pull 10.1.5.76/library/squirrel-backend"
 
-                        sshCommand remote: remote, command: "docker run -d --network host --restart=always  --name squirrel-backend10.1.5.76/library/squirrel-backend"
+                        sshCommand remote: remote, command: "docker run -d --network host --restart=always  --name squirrel-backend 10.1.5.76/library/squirrel-backend"
                     }
                 
                 }
