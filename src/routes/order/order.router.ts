@@ -96,6 +96,8 @@ router.get("/", async (ctx, next) => {
     ctx.query.pagination.where.malfunctionId = ctx.query.malfunctionId;
   }
 
+  ctx.query.pagination.order = [["date", "DESC"]];
+
   await OrderModel.findAll(ctx.query.pagination).then((orders) => {
     ctx.body = orders;
   });
