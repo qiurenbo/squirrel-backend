@@ -5,7 +5,7 @@ import Malfunction from "../../models/order/malfunction.model";
 import Target from "../../models/order/target.model";
 import Action from "../../models/order/action.model";
 import Operator from "../../models/operator.model";
-import Status from "src/models/order/status.model";
+import Status from "../../models/order/status.model";
 import { ForeignKeyConstraintError, Op } from "sequelize";
 
 const router = new Router();
