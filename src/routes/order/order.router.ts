@@ -72,9 +72,6 @@ const validationMiddleware = () => {
 };
 
 router.get("/", async (ctx, next) => {
-  await OrderModel.findAll().then((orders) => {
-    ctx.set("X-Total-Count", orders.length + "");
-  });
   ctx.query.pagination.include = [
     Addr,
     Malfunction,
@@ -83,38 +80,42 @@ router.get("/", async (ctx, next) => {
     Operator,
     Status,
   ];
-  ctx.query.pagination.where = {};
+  let where: any = {};
   if (ctx.query.startDate && ctx.query.endDate) {
-    ctx.query.pagination.where.date = {
+    where.date = {
       [Op.between]: [ctx.query.startDate, ctx.query.endDate],
     };
   }
 
   if (ctx.query.addrId) {
-    ctx.query.pagination.where.addrId = ctx.query.addrId;
+    where.addrId = ctx.query.addrId;
   }
   if (ctx.query.operatorId) {
-    ctx.query.pagination.where.operatorId = ctx.query.operatorId;
+    where.operatorId = ctx.query.operatorId;
   }
 
   if (ctx.query.actionId) {
-    ctx.query.pagination.where.actionId = ctx.query.actionId;
+    where.actionId = ctx.query.actionId;
   }
   if (ctx.query.targetId) {
-    ctx.query.pagination.where.targetId = ctx.query.targetId;
+    where.targetId = ctx.query.targetId;
   }
   if (ctx.query.malfunctionId) {
-    ctx.query.pagination.where.malfunctionId = ctx.query.malfunctionId;
+    where.malfunctionId = ctx.query.malfunctionId;
   }
 
   if (ctx.query.statusId) {
-    ctx.query.pagination.where.statusId = ctx.query.statusId;
+    where.statusId = ctx.query.statusId;
   }
 
   ctx.query.pagination.order = [["date", "DESC"]];
-
+  ctx.query.pagination.where = where;
   await OrderModel.findAll(ctx.query.pagination).then((orders) => {
     ctx.body = orders;
+  });
+
+  await OrderModel.findAll({ where: where }).then((orders) => {
+    ctx.set("X-Total-Count", orders.length + "");
   });
 });
 
