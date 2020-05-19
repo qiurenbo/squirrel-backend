@@ -5,11 +5,9 @@ import Malfunction from "../../models/order/malfunction.model";
 import Target from "../../models/order/target.model";
 import Action from "../../models/order/action.model";
 import Operator from "../../models/operator.model";
-import {
-  ForeignKeyConstraintError,
-  UniqueConstraintError,
-  Op,
-} from "sequelize";
+import Status from "src/models/order/status.model";
+import { ForeignKeyConstraintError, Op } from "sequelize";
+
 const router = new Router();
 
 // Sequelize default use UTC time
@@ -22,6 +20,7 @@ const cloneOrder = (order: OrderModel) => {
     actionId: order.actionId,
     targetId: order.targetId,
     malfunctionId: order.malfunctionId,
+    statusId: order.statusId,
   };
 };
 
@@ -60,6 +59,11 @@ const validationMiddleware = () => {
       if (!ctx.request.body.malfunctionId) {
         ctx.body.malfunctionId = "MalfunctionId is required.";
       }
+
+      if (!ctx.request.body.statusId) {
+        ctx.body.statusId = "StatusId is required.";
+      }
+
       return;
     }
 
@@ -71,7 +75,14 @@ router.get("/", async (ctx, next) => {
   await OrderModel.findAll().then((orders) => {
     ctx.set("X-Total-Count", orders.length + "");
   });
-  ctx.query.pagination.include = [Addr, Malfunction, Target, Action, Operator];
+  ctx.query.pagination.include = [
+    Addr,
+    Malfunction,
+    Target,
+    Action,
+    Operator,
+    Status,
+  ];
   ctx.query.pagination.where = {};
   if (ctx.query.startDate && ctx.query.endDate) {
     ctx.query.pagination.where.date = {
@@ -94,6 +105,10 @@ router.get("/", async (ctx, next) => {
   }
   if (ctx.query.malfunctionId) {
     ctx.query.pagination.where.malfunctionId = ctx.query.malfunctionId;
+  }
+
+  if (ctx.query.statusId) {
+    ctx.query.pagination.where.statusId = ctx.query.statusId;
   }
 
   ctx.query.pagination.order = [["date", "DESC"]];

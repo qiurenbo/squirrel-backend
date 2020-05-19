@@ -4,8 +4,10 @@ import TargetRouter from "./target.router";
 import MalfunctonRouter from "./malfunction.router";
 import OrderRouter from "./order.router";
 import StatsRouter from "./stats.router";
+import StatusRouter from "./status.router";
 const router = new Router();
 
+router.use("/statuses", StatusRouter.routes());
 router.use("/actions", ActionRouter.routes());
 router.use("/targets", TargetRouter.routes());
 router.use("/malfunctions", MalfunctonRouter.routes());

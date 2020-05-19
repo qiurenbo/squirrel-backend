@@ -61,6 +61,15 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: true,
       },
+      statusId: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
+        references: {
+          model: "statuses",
+          key: "id",
+        },
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

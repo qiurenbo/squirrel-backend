@@ -5,6 +5,7 @@ import Malfunction from "./malfunction.model";
 import Target from "./target.model";
 import Action from "./action.model";
 import Operator from "../operator.model";
+import Status from "./status.model";
 class Order extends Model {
   id: string;
   date: string;
@@ -13,6 +14,7 @@ class Order extends Model {
   targetId: string;
   actionId: string;
   malfunctionId: string;
+  statusId: string;
 }
 
 Order.init(
@@ -55,6 +57,11 @@ Order.init(
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    statusId: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+    },
   },
   {
     sequelize,
@@ -66,4 +73,5 @@ Order.belongsTo(Target, { foreignKey: "targetId" });
 Order.belongsTo(Action, { foreignKey: "actionId" });
 Order.belongsTo(Addr, { foreignKey: "addrId" });
 Order.belongsTo(Operator, { foreignKey: "operatorId" });
+Order.belongsTo(Status, { foreignKey: "statusId" });
 export default Order;

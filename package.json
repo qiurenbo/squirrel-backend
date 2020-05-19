@@ -39,7 +39,6 @@
     "db:re-migrate": "npm run db:drop && npm run db:create && npm run db:migrate && npm run db:migrate:seeders",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "nodemon .",
-    "start:prod": "ts-node -r tsconfig-paths/register ./src/server.ts",
     "serve": "tsc src/server.ts -w & pm2 start dist/server.js --watch",
     "start": "tsc && pm2 start ecosystem.config.js",
     "build": "tsc"
