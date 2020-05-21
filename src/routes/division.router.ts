@@ -1,6 +1,6 @@
 import * as Router from "koa-router";
-import Street from "src/models/addr/street.model";
-import Area from "src/models/addr/area.model";
+import Street from "../models/addr/street.model";
+import Area from "../models/addr/area.model";
 const router = new Router();
 
 router.get("/", async (ctx, next) => {

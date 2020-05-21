@@ -7,8 +7,8 @@ import Action from "../../models/order/action.model";
 import Operator from "../../models/operator.model";
 import Status from "../../models/order/status.model";
 import { ForeignKeyConstraintError, Op } from "sequelize";
-import Area from "src/models/addr/area.model";
-import Street from "src/models/addr/street.model";
+import Area from "../../models/addr/area.model";
+import Street from "../../models/addr/street.model";
 
 const router = new Router();
 
