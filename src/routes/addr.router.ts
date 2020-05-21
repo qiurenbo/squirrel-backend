@@ -1,16 +1,19 @@
 import * as Router from "koa-router";
-import AddrModel from "../models/addr.model";
+import Addr from "../models/addr/addr.model";
 import { UniqueConstraintError } from "sequelize";
+import Street from "src/models/addr/street.model";
+import Area from "src/models/addr/area.model";
 const router = new Router();
 
 // Sequelize default use UTC time
-const cloneAddr = (addr: AddrModel) => {
+const cloneAddr = (addr: Addr) => {
   return {
     id: addr.id,
     name: addr.name,
     addr: addr.addr,
     tel: addr.tel,
     type: addr.type,
+    streetId: addr.streetId,
   };
 };
 
@@ -20,7 +23,8 @@ const validationMiddleware = () => {
       !ctx.request.body.name ||
       !ctx.request.body.addr ||
       !ctx.request.body.tel ||
-      !ctx.request.body.type
+      !ctx.request.body.type ||
+      !ctx.request.body.streetId
     ) {
       ctx.status = 400;
       ctx.body = {};
@@ -40,6 +44,10 @@ const validationMiddleware = () => {
         ctx.body.type = "Type is required.";
       }
 
+      if (!ctx.request.body.streetId) {
+        ctx.body.streetId = "Street ID is required.";
+      }
+
       return;
     }
 
@@ -48,17 +56,20 @@ const validationMiddleware = () => {
 };
 
 router.get("/", async (ctx, next) => {
-  await AddrModel.findAll().then((addrs) => {
-    ctx.set("X-Total-Count", addrs.length + "");
+  let query = ctx.query.pagination;
+  query.include = [{ model: Street, include: [{ model: Area }] }];
+
+  await Addr.findAll(query).then((addrs) => {
+    ctx.body = addrs;
   });
 
-  await AddrModel.findAll(ctx.query.pagination).then((addrs) => {
-    ctx.body = addrs;
+  await Addr.findAll().then((addrs) => {
+    ctx.set("X-Total-Count", addrs.length + "");
   });
 });
 
 router.post("/", validationMiddleware(), async (ctx, next) => {
-  await AddrModel.create(ctx.request.body)
+  await Addr.create(ctx.request.body)
     .then((addr) => {
       ctx.body = cloneAddr(addr);
     })
@@ -72,7 +83,7 @@ router.post("/", validationMiddleware(), async (ctx, next) => {
 });
 
 router.put("/:addrId", validationMiddleware(), async (ctx, next) => {
-  await AddrModel.update(ctx.request.body, {
+  await Addr.update(ctx.request.body, {
     where: { id: ctx.params.addrId },
   })
     .then((rows) => {
@@ -93,7 +104,7 @@ router.put("/:addrId", validationMiddleware(), async (ctx, next) => {
 });
 
 router.delete("/:addrId", async (ctx, next) => {
-  await AddrModel.destroy({
+  await Addr.destroy({
     where: { id: ctx.params.addrId },
   }).then(() => {
     ctx.body = {};

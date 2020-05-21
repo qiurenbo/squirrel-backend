@@ -1,5 +1,5 @@
 import { Model, DataTypes } from "sequelize";
-import Addr from "../addr.model";
+import Addr from "../addr/addr.model";
 import sequelize from "../../config/mariadb";
 import Malfunction from "./malfunction.model";
 import Target from "./target.model";

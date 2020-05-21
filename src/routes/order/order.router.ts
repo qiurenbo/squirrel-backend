@@ -1,12 +1,14 @@
 import * as Router from "koa-router";
 import OrderModel from "../../models/order/order.model";
-import Addr from "../../models/addr.model";
+import Addr from "../../models/addr/addr.model";
 import Malfunction from "../../models/order/malfunction.model";
 import Target from "../../models/order/target.model";
 import Action from "../../models/order/action.model";
 import Operator from "../../models/operator.model";
 import Status from "../../models/order/status.model";
 import { ForeignKeyConstraintError, Op } from "sequelize";
+import Area from "src/models/addr/area.model";
+import Street from "src/models/addr/street.model";
 
 const router = new Router();
 
@@ -73,7 +75,10 @@ const validationMiddleware = () => {
 
 router.get("/", async (ctx, next) => {
   ctx.query.pagination.include = [
-    Addr,
+    {
+      model: Addr,
+      include: [{ model: Street, include: [Area] }],
+    },
     Malfunction,
     Target,
     Action,
