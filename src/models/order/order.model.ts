@@ -2,7 +2,7 @@ import { Model, DataTypes } from "sequelize";
 import Addr from "../addr/addr.model";
 import sequelize from "../../config/mariadb";
 import Malfunction from "./malfunction.model";
-import Target from "./target.model";
+import Target from "./target/target.model";
 import Action from "./action.model";
 import Operator from "../operator.model";
 import Status from "./status.model";

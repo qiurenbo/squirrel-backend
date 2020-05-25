@@ -1,5 +1,5 @@
 "use strict";
-const uuidv4 = require("uuid").v4;
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
     /*
@@ -11,27 +11,36 @@ module.exports = {
         name: 'John Doe',
         isBetaMember: false
       }], {});
-    */ return queryInterface.bulkInsert(
-      "targets",
+    */
+
+    return queryInterface.bulkInsert(
+      "minorTargetTypes",
       [
         {
-          id: "ab6902ce-0987-4ae5-8d48-630412d2f5fe",
-          name: "阿尔法迪——自助借还机",
-          minorTargetTypeId: "eae76e06-05d0-4d15-86db-7d374cb6ce59",
+          id: "eae76e06-05d0-4d15-86db-7d374cb6ce59",
+          name: "安防",
+          majorTargetTypeId: "79d97f77-aff4-4832-9a19-fb48951af21a",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          id: "d6240b34-b862-4baf-866f-3416df36e834",
-          name: "TPLink——路由器",
-          minorTargetTypeId: "eae76e06-05d0-4d15-86db-7d374cb6ce59",
+          id: "35343096-65e5-4ee8-a786-f9098770c5de",
+          name: "计算机",
+          majorTargetTypeId: "79d97f77-aff4-4832-9a19-fb48951af21a",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          id: "a26ec00d-9dfa-43e8-8947-8098b4632b22",
-          name: "海恒——自助借还机",
-          minorTargetTypeId: "eae76e06-05d0-4d15-86db-7d374cb6ce59",
+          id: "884e05c6-8a94-4696-bfd0-9e4e074c2137",
+          name: "网络设备",
+          majorTargetTypeId: "79d97f77-aff4-4832-9a19-fb48951af21a",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: "7050231d-146d-4196-be33-dc330fb8ddd3",
+          name: "业务系统",
+          majorTargetTypeId: "35343096-65e5-4ee8-a786-f9098770c5de",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -47,10 +56,6 @@ module.exports = {
 
       Example:
       return queryInterface.bulkDelete('People', null, {});
-    */ return queryInterface.bulkDelete(
-      "targets",
-      null,
-      {}
-    );
+    */
   },
 };

@@ -1,7 +1,9 @@
 import * as Router from "koa-router";
 
-import TargetModel from "../../models/order/target.model";
-import { UniqueConstraintError } from "sequelize";
+import TargetModel from "../../models/order/target/target.model";
+import { UniqueConstraintError, ForeignKeyConstraintError } from "sequelize";
+import MinorTargetType from "../../models/order/target/minor-target-type.model";
+import MajorTargetType from "../../models/order/target/major-target-type.model";
 const router = new Router();
 
 // Sequelize default use UTC time
@@ -14,13 +16,15 @@ const cloneTarget = (target: TargetModel) => {
 
 const validationMiddleware = () => {
   return async (ctx: any, next: any) => {
-    if (!ctx.request.body.name) {
+    if (!ctx.request.body.name || !ctx.request.body.minorTargetTypeId) {
       ctx.status = 400;
       ctx.body = {};
       if (!ctx.request.body.name) {
         ctx.body.name = "Name is required.";
       }
-
+      if (!ctx.request.body.minorTargetTypeId) {
+        ctx.body.name = "MinorTargetTypeId is required.";
+      }
       return;
     }
 
@@ -32,7 +36,9 @@ router.get("/", async (ctx, next) => {
   await TargetModel.findAll().then((targets) => {
     ctx.set("X-Total-Count", targets.length + "");
   });
-  await TargetModel.findAll(ctx.query.pagination).then((targets) => {
+  let query = ctx.query.pagination;
+  query.include = [{ model: MinorTargetType, include: [MajorTargetType] }];
+  await TargetModel.findAll(query).then((targets) => {
     ctx.body = targets;
   });
 });
@@ -46,6 +52,9 @@ router.post("/", validationMiddleware(), async (ctx, next) => {
       if (error instanceof UniqueConstraintError) {
         ctx.body = { error: "Name already exists." };
         ctx.status = 409;
+      } else if (error instanceof ForeignKeyConstraintError) {
+        ctx.status = 409;
+        ctx.body = { error: "MinorTargetId error." };
       }
     });
 });

@@ -2,7 +2,7 @@ import * as Router from "koa-router";
 import OrderModel from "../../models/order/order.model";
 
 import MalfunctionModel from "../../models/order/malfunction.model";
-import TargetModel from "../../models/order/target.model";
+import TargetModel from "../../models/order/target/target.model";
 import * as moment from "moment";
 import { Sequelize } from "sequelize";
 const router = new Router();

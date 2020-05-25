@@ -2,7 +2,7 @@ import * as Router from "koa-router";
 import OrderModel from "../../models/order/order.model";
 import Addr from "../../models/addr/addr.model";
 import Malfunction from "../../models/order/malfunction.model";
-import Target from "../../models/order/target.model";
+import Target from "../../models/order/target/target.model";
 import Action from "../../models/order/action.model";
 import Operator from "../../models/operator.model";
 import Status from "../../models/order/status.model";

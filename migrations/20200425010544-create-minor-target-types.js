@@ -1,7 +1,7 @@
 "use strict";
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable("targets", {
+    return queryInterface.createTable("minorTargetTypes", {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -9,17 +9,15 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
       },
-      minorTargetTypeId: {
+      majorTargetTypeId: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
         references: {
-          model: "minorTargetTypes",
+          model: "majorTargetTypes",
           key: "id",
         },
-        allowNull: false,
       },
       createdAt: {
         allowNull: false,
@@ -32,6 +30,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("targets");
+    return queryInterface.dropTable("minorTargetTypes");
   },
 };
