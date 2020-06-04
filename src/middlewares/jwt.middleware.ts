@@ -8,7 +8,7 @@ const authenticationMiddleware = () => {
       try {
         const object = jwt.verify(token, process.env.CRYPRTO_KEY);
       } catch (error) {
-        ctx.status = 400;
+        ctx.status = 403;
 
         switch (error.name) {
           case "TokenExpiredError":
@@ -25,7 +25,7 @@ const authenticationMiddleware = () => {
       }
       await next();
     } else {
-      ctx.status = 400;
+      ctx.status = 403;
       ctx.body = { error: "Token is required." };
       return;
     }
