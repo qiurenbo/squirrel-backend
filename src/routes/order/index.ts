@@ -5,10 +5,11 @@ import MalfunctonRouter from "./malfunction.router";
 import OrderRouter from "./order.router";
 import StatsRouter from "./stats.router";
 import StatusRouter from "./status.router";
-import ProjectsRouter from "./projects.router";
+import ProjectRouter from "./project.router";
+import CameraRouter from "./camera.router";
 const router = new Router();
-
-router.use("/projects", ProjectsRouter.routes());
+router.use("/cameras", CameraRouter.routes());
+router.use("/projects", ProjectRouter.routes());
 router.use("/statuses", StatusRouter.routes());
 router.use("/actions", ActionRouter.routes());
 router.use("/targets", TargetRouter.routes());

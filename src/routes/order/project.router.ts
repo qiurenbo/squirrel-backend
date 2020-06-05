@@ -83,7 +83,7 @@ router.get("/", async (ctx, next) => {
     where.statusId = ctx.query.statusId;
   }
 
-  ctx.query.pagination.project = [["date", "DESC"]];
+  ctx.query.pagination.order = [["date", "DESC"]];
   ctx.query.pagination.where = where;
 
   await ProjectModel.findAll(ctx.query.pagination).then((projects) => {
