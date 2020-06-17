@@ -74,7 +74,8 @@ const validationMiddleware = () => {
 };
 
 router.get("/", async (ctx, next) => {
-  ctx.query.pagination.include = [
+  let query: any = ctx.query.pagination;
+  query.include = [
     {
       model: Addr,
       include: [{ model: Street, include: [Area] }],
@@ -86,6 +87,7 @@ router.get("/", async (ctx, next) => {
     Status,
   ];
   let where: any = {};
+  query.where = where;
   if (ctx.query.startDate && ctx.query.endDate) {
     where.date = {
       [Op.between]: [ctx.query.startDate, ctx.query.endDate],
@@ -113,13 +115,13 @@ router.get("/", async (ctx, next) => {
     where.statusId = ctx.query.statusId;
   }
 
-  ctx.query.pagination.order = [["date", "DESC"]];
-  ctx.query.pagination.where = where;
-  await OrderModel.findAll(ctx.query.pagination).then((orders) => {
+  query.order = [["date", "DESC"]];
+
+  await OrderModel.findAll(query).then((orders) => {
     ctx.body = orders;
   });
 
-  await OrderModel.findAll({ where: where }).then((orders) => {
+  await OrderModel.findAll().then((orders) => {
     ctx.set("X-Total-Count", orders.length + "");
   });
 });

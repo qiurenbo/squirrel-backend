@@ -4,7 +4,8 @@ module.exports = {
     return queryInterface.createTable("streets", {
       id: {
         primaryKey: true,
-        type: Sequelize.STRING,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
       name: {
         type: Sequelize.STRING,
