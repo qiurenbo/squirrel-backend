@@ -33,12 +33,14 @@ module.exports = {
       },
       source: {
         type: Sequelize.STRING,
-        allowNull: false,
       },
       remarks: {
         type: Sequelize.TEXT,
       },
 
+      stock: {
+        type: Sequelize.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

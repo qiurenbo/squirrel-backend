@@ -12,6 +12,7 @@ export default class Distribute extends Model {
   operatorId: string;
   receiver: string;
   remarks: string;
+  stock: number;
 }
 
 Distribute.init(

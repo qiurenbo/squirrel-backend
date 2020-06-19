@@ -69,11 +69,24 @@ router.post("/", async (ctx, next) => {
       ctx.body = distribute;
     })
     .catch((error) => {
+      ctx.status = 409;
       if (error instanceof UniqueConstraintError) {
-        ctx.status = 409;
         ctx.body = { error: "Name already exists." };
+      } else {
+        ctx.body = error;
       }
     });
+
+  await Purchase.findOne({
+    where: { id: ctx.request.body.purchaseId },
+  }).then(async (purchase) => {
+    await Purchase.update(
+      { stock: purchase.number - ctx.request.body.number },
+      {
+        where: { id: ctx.request.body.purchaseId },
+      }
+    ).then(() => {});
+  });
 });
 
 router.put("/:distributeId", async (ctx, next) => {
@@ -99,10 +112,28 @@ router.put("/:distributeId", async (ctx, next) => {
 });
 
 router.delete("/:distributeId", async (ctx, next) => {
+  let distribute: DistributeModel | null = null;
+  await DistributeModel.findOne({
+    where: { id: ctx.params.distributeId },
+  }).then((d) => {
+    distribute = d;
+  });
+
   await DistributeModel.destroy({
     where: { id: ctx.params.distributeId },
-  }).then(() => {
+  }).then(async () => {
     ctx.body = {};
+
+    await Purchase.findOne({
+      where: { id: distribute.purchaseId },
+    }).then(async (purchase) => {
+      await Purchase.update(
+        { stock: purchase.stock + distribute.number },
+        {
+          where: { id: distribute.purchaseId },
+        }
+      ).then(() => {});
+    });
   });
 });
 

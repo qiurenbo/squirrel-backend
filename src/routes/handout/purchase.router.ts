@@ -1,6 +1,7 @@
 import * as Router from "koa-router";
 import PurchaseModel from "../../models/handout/purchase.model";
 import { UniqueConstraintError, Op } from "sequelize";
+import Purchase from "../../models/handout/purchase.model";
 const router = new Router();
 
 router.get("/", async (ctx, next) => {
@@ -25,6 +26,7 @@ router.get("/", async (ctx, next) => {
 });
 
 router.post("/", async (ctx, next) => {
+  ctx.request.body.stock = ctx.request.body.number;
   await PurchaseModel.create(ctx.request.body)
     .then((purchase) => {
       ctx.body = purchase;
@@ -36,6 +38,17 @@ router.post("/", async (ctx, next) => {
 });
 
 router.put("/:purchaseId", async (ctx, next) => {
+  let purchase: Purchase | null = null;
+  await PurchaseModel.findOne({ where: { id: ctx.params.purchaseId } }).then(
+    (p) => {
+      purchase = p;
+    }
+  );
+  if (ctx.request.body.number && purchase) {
+    ctx.request.body.stock =
+      ctx.request.body.number - (purchase.number - purchase.stock);
+  }
+
   await PurchaseModel.update(ctx.request.body, {
     where: { id: ctx.params.purchaseId },
   })

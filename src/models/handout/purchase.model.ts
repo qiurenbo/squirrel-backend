@@ -9,6 +9,7 @@ export default class Purchase extends Model {
   number: number;
   totalPrice: number;
   source: string;
+  stock: number;
   remarks: string;
 }
 
@@ -32,6 +33,9 @@ Purchase.init(
       type: DataTypes.FLOAT,
     },
     number: {
+      type: DataTypes.INTEGER,
+    },
+    stock: {
       type: DataTypes.INTEGER,
     },
     totalPrice: {
