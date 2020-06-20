@@ -4,7 +4,7 @@ import AccountModel from "../models/account.model";
 
 import { UniqueConstraintError } from "sequelize";
 
-import authenticationMiddleware from "../middlewares/jwt.middleware";
+import authenticate from "../middlewares/jwt.middleware";
 import { cryptoPassword } from "../utils";
 const router = new Router();
 
@@ -112,7 +112,7 @@ router.put("/:id", validationMiddleware(false), async (ctx, next) => {
     });
 });
 
-router.delete("/:id", authenticationMiddleware(), async (ctx, next) => {
+router.delete("/:id", authenticate(), async (ctx, next) => {
   await AccountModel.destroy({
     where: { id: ctx.params.id },
   }).then(() => {

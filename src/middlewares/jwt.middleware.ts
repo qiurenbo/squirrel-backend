@@ -1,6 +1,6 @@
 import * as jwt from "jsonwebtoken";
 
-const authenticationMiddleware = () => {
+const authenticate = () => {
   return async (ctx: any, next: any) => {
     if (ctx.header.authorization?.startsWith("Bearer")) {
       const token = ctx.header.authorization.replace("Bearer ", "");
@@ -31,4 +31,4 @@ const authenticationMiddleware = () => {
     }
   };
 };
-export default authenticationMiddleware;
+export default authenticate;

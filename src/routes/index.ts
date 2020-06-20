@@ -7,20 +7,16 @@ import OperatorRouter from "./operator.router";
 import DivisionRouter from "./division.router";
 import MinorTargetRouter from "./minorTarget.router";
 import HandOutRouter from "./handout";
-import authenticationMiddleware from "../middlewares/jwt.middleware";
+import authenticate from "../middlewares/jwt.middleware";
 const router = new Router({ prefix: "/api" });
-router.use(
-  "/minorTargetTypes",
-  authenticationMiddleware(),
-  MinorTargetRouter.routes()
-);
+router.use("/minorTargetTypes", authenticate(), MinorTargetRouter.routes());
 
-router.use("/handouts", authenticationMiddleware(), HandOutRouter.routes());
-router.use("/divisions", authenticationMiddleware(), DivisionRouter.routes());
-router.use("/operators", authenticationMiddleware(), OperatorRouter.routes());
-router.use("/orders", authenticationMiddleware(), OrderRouter.routes());
-router.use("/addrs", authenticationMiddleware(), AddrRouter.routes());
-router.use("/accounts", authenticationMiddleware(), AccountRouter.routes());
+router.use("/handouts", authenticate(), HandOutRouter.routes());
+router.use("/divisions", authenticate(), DivisionRouter.routes());
+router.use("/operators", authenticate(), OperatorRouter.routes());
+router.use("/orders", authenticate(), OrderRouter.routes());
+router.use("/addrs", authenticate(), AddrRouter.routes());
+router.use("/accounts", authenticate(), AccountRouter.routes());
 router.use("", LoginRouter.routes());
 
 export default router;

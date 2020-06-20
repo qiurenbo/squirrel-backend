@@ -1,4 +1,4 @@
-const paginationMiddleware = () => {
+const paginate = () => {
   return async (ctx: any, next: any) => {
     let query: { offset?: number; limit?: number } = {};
 
@@ -15,4 +15,5 @@ const paginationMiddleware = () => {
     await next();
   };
 };
-export default paginationMiddleware;
+
+export default paginate;

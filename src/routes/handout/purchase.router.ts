@@ -1,79 +1,44 @@
 import * as Router from "koa-router";
-import PurchaseModel from "../../models/handout/purchase.model";
-import { UniqueConstraintError, Op } from "sequelize";
-import Purchase from "../../models/handout/purchase.model";
+
+import {
+  getPurchases,
+  addPurchase,
+  editPurchase,
+  deletePurchaseById,
+} from "../../services/purchase.service";
 const router = new Router();
 
 router.get("/", async (ctx, next) => {
-  let query: any = ctx.query.pagination;
-
-  let where: any = {};
-  query.where = where;
-  if (ctx.query.startDate && ctx.query.endDate) {
-    where.date = {
-      [Op.between]: [ctx.query.startDate, ctx.query.endDate],
-    };
-  }
-
-  query.order = [["date", "DESC"]];
-
-  await PurchaseModel.findAll().then((purchases) => {
-    ctx.set("X-Total-Count", purchases.length + "");
-  });
-  await PurchaseModel.findAll(query).then((purchases) => {
-    ctx.body = purchases;
-  });
+  await getPurchases(ctx.query)
+    .then((rs) => {
+      ctx.set("X-Total-Count", rs.length + "");
+      ctx.body = rs.purchases;
+    })
+    .catch((err) => {});
 });
 
 router.post("/", async (ctx, next) => {
-  ctx.request.body.stock = ctx.request.body.number;
-  await PurchaseModel.create(ctx.request.body)
+  await addPurchase(ctx.request.body)
     .then((purchase) => {
       ctx.body = purchase;
     })
-    .catch((error) => {
-      ctx.status = 409;
-      ctx.body = error;
-    });
+    .catch((err) => {});
 });
 
 router.put("/:purchaseId", async (ctx, next) => {
-  let purchase: Purchase | null = null;
-  await PurchaseModel.findOne({ where: { id: ctx.params.purchaseId } }).then(
-    (p) => {
-      purchase = p;
-    }
-  );
-  if (ctx.request.body.number && purchase) {
-    ctx.request.body.stock =
-      ctx.request.body.number - (purchase.number - purchase.stock);
-  }
-
-  await PurchaseModel.update(ctx.request.body, {
-    where: { id: ctx.params.purchaseId },
-  })
-    //https://stackoverflow.com/questions/38524938/sequelize-update-record-and-return-result
-    .then((rows) => {
-      if (rows[0] !== 0) {
-        ctx.request.body.id = ctx.params.purchaseId;
-        ctx.body = ctx.request.body;
-      } else {
-        ctx.status = 404;
-        ctx.body = { error: "Id doesn't exist." };
-      }
+  await editPurchase(ctx.params.purchaseId, ctx.request.body)
+    .then((purchase) => {
+      ctx.body = purchase;
     })
-    .catch((error) => {
-      ctx.status = 409;
-      ctx.body = { error: "Name already exists." };
-    });
+    .catch((err) => {});
 });
 
 router.delete("/:purchaseId", async (ctx, next) => {
-  await PurchaseModel.destroy({
-    where: { id: ctx.params.purchaseId },
-  }).then(() => {
-    ctx.body = {};
-  });
+  await deletePurchaseById(ctx.params.purchaseId)
+    .then(() => {
+      ctx.body = {};
+    })
+    .catch();
 });
 
 export default router;
