@@ -121,15 +121,28 @@ const editDistribute = async (
       return;
     }
 
+    let prePurchase: Purchase = null;
+    await getPurchaseById(preDistribute.purchaseId).then((p) => {
+      prePurchase = p;
+    });
+
+    if (!prePurchase) {
+      reject(null);
+      return;
+    }
+
     Promise.all([
       Distribute.update(distribute, {
         where: { id: distributeId },
       }),
+      // restore stock
+      editPurchase(prePurchase.id, {
+        stock: prePurchase.stock + preDistribute.number,
+      }),
+      // and re-calculate stock
       getPurchaseById(distribute.purchaseId).then((purchase) => {
-        // restore stock and re-calculate stock
-        purchase.stock =
-          purchase.stock + preDistribute.number - distribute.number;
-        editPurchase(purchase.id, { stock: purchase.stock });
+        purchase.stock = purchase.stock - distribute.number;
+        return editPurchase(purchase.id, { stock: purchase.stock });
       }),
     ]).then((values) => resolve(distribute));
   });

@@ -71,7 +71,7 @@ const editPurchase = async (
   purchase: any
 ): Promise<Purchase> => {
   return new Promise(async (resolve, reject) => {
-    await Purchase.update(purchase, {
+    Purchase.update(purchase, {
       where: { id: purchaseId },
     }).then((row) => {
       resolve(purchase);
