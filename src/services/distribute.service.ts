@@ -129,7 +129,7 @@ const editDistribute = async (
         // restore stock and re-calculate stock
         purchase.stock =
           purchase.stock + preDistribute.number - distribute.number;
-        editPurchase(purchase.id, purchase);
+        editPurchase(purchase.id, { stock: purchase.stock });
       }),
     ]).then((values) => resolve(distribute));
   });
