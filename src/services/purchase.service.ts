@@ -51,7 +51,7 @@ const getPurchases = async (
   });
 };
 
-const addPurchase = (purchase: Purchase): Promise<Purchase> => {
+const addPurchase = (purchase: any): Promise<Purchase> => {
   // default stock equals number
   purchase.stock = purchase.number;
   return Purchase.create(purchase);
@@ -74,7 +74,6 @@ const editPurchase = async (
     await Purchase.update(purchase, {
       where: { id: purchaseId },
     }).then((row) => {
-      console.log(row);
       resolve(purchase);
     });
   });
