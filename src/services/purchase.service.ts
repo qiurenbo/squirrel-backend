@@ -69,13 +69,9 @@ const deletePurchaseById = (purchaseId: string): Promise<number> => {
 const editPurchase = async (
   purchaseId: string,
   purchase: any
-): Promise<Purchase> => {
-  return new Promise((resolve, reject) => {
-    return Purchase.update(purchase, {
-      where: { id: purchaseId },
-    }).then((row) => {
-      resolve(purchase);
-    });
+): Promise<[number, Purchase[]]> => {
+  return Purchase.update(purchase, {
+    where: { id: purchaseId },
   });
 
   //https://stackoverflow.com/questions/38524938/sequelize-update-record-and-return-result
