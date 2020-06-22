@@ -130,6 +130,12 @@ const editDistribute = async (
       reject(null);
       return;
     }
+
+    // restore stock
+    await editPurchase(prePurchase.id, {
+      stock: prePurchase.stock + preDistribute.number,
+    });
+
     let purchase: Purchase = null;
     await getPurchaseById(distribute.purchaseId).then((p) => {
       purchase = p;
@@ -138,10 +144,6 @@ const editDistribute = async (
     Promise.all([
       Distribute.update(distribute, {
         where: { id: distributeId },
-      }),
-      // restore stock
-      editPurchase(prePurchase.id, {
-        stock: prePurchase.stock + preDistribute.number,
       }),
       // and re-calculate stock
       editPurchase(purchase.id, {

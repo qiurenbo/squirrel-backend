@@ -29,7 +29,7 @@ router.post("/", async (ctx, next) => {
 });
 
 router.put("/:distributeId", async (ctx, next) => {
-  await editDistribute(ctx.query.distributeId, ctx.request.body)
+  await editDistribute(ctx.params.distributeId, ctx.request.body)
     .then((distribute) => {
       ctx.body = distribute;
     })
