@@ -30,8 +30,8 @@ router.post("/", async (ctx, next) => {
 
 router.put("/:distributeId", async (ctx, next) => {
   await editDistribute(ctx.params.distributeId, ctx.request.body)
-    .then((distribute) => {
-      ctx.body = distribute;
+    .then(([number, distributes]) => {
+      ctx.body = ctx.request.body;
     })
     .catch((error) => {
       ctx.body = error;

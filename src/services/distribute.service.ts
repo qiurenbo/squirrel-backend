@@ -50,6 +50,7 @@ const getDistributes = async (
 
   return new Promise<IDistributeQueryResult>((resolve, reject) => {
     Promise.all([
+      // return x-total without pagination filter
       Distribute.findAll({ where, include }),
       Distribute.findAll(query),
     ]).then((values) => {
@@ -58,98 +59,67 @@ const getDistributes = async (
   });
 };
 
-const addDistribute = (distribute: Distribute): Promise<Distribute> => {
-  return new Promise((resolve, reject) => {
-    Promise.all([
-      Distribute.create(distribute),
-      getPurchaseById(distribute.purchaseId).then((purchase) => {
-        if (!purchase) {
-          reject(null);
-          return;
-        }
-        purchase.stock = purchase.stock - distribute.number;
-        return editPurchase(distribute.purchaseId, { stock: purchase.stock });
-      }),
-    ]).then((values) => {
-      console.log(values);
-      resolve(values[0]);
-    });
-  });
+const addDistribute = async (distribute: Distribute): Promise<Distribute> => {
+  await calcStock(distribute);
+
+  return Distribute.create(distribute);
 };
 
 const getDistributeById = (distributeId: string): Promise<Distribute> => {
   return Distribute.findOne({ where: { id: distributeId } });
 };
 
-const deleteDistributeById = (distributeId: string): Promise<boolean> => {
-  return new Promise(async (resolve, reject) => {
-    let preDistribute: Distribute = null;
-    await getDistributeById(distributeId).then((p) => {
-      preDistribute = p;
-    });
+const deleteDistributeById = async (distributeId: string): Promise<number> => {
+  await restoreStock(distributeId);
 
-    if (!preDistribute) {
-      reject(null);
-      return;
-    }
+  return Distribute.destroy({
+    where: { id: distributeId },
+  });
+};
 
-    Promise.all([
-      Distribute.destroy({
-        where: { id: distributeId },
-      }),
-      getPurchaseById(preDistribute.purchaseId).then((purchase) => {
-        // restore stock
-        purchase.stock = purchase.stock + preDistribute.number;
-        editPurchase(purchase.id, { stock: purchase.stock });
-      }),
-    ]).then((values) => resolve(true));
+// restore stock
+const restoreStock = async (
+  distributeId: string
+): Promise<[number, Purchase[]]> => {
+  let preDistribute: Distribute = null;
+  await getDistributeById(distributeId).then((p) => {
+    preDistribute = p;
+  });
+
+  let prePurchase: Purchase = null;
+  await getPurchaseById(preDistribute.purchaseId).then((p) => {
+    prePurchase = p;
+  });
+
+  return editPurchase(prePurchase.id, {
+    stock: prePurchase.stock + preDistribute.number,
+  });
+};
+
+//calculate stock
+const calcStock = async (
+  distribute: Distribute
+): Promise<[number, Purchase[]]> => {
+  let purchase: Purchase = null;
+  await getPurchaseById(distribute.purchaseId).then((p) => {
+    purchase = p;
+  });
+
+  return editPurchase(purchase.id, {
+    stock: purchase.stock - distribute.number,
   });
 };
 
 const editDistribute = async (
   distributeId: string,
   distribute: Distribute
-): Promise<Distribute> => {
-  return new Promise(async (resolve, reject) => {
-    let preDistribute: Distribute = null;
-    await getDistributeById(distributeId).then((p) => {
-      preDistribute = p;
-    });
+): Promise<[number, Distribute[]]> => {
+  await restoreStock(distributeId);
 
-    if (!preDistribute) {
-      reject(null);
-      return;
-    }
+  await calcStock(distribute);
 
-    let prePurchase: Purchase = null;
-    await getPurchaseById(preDistribute.purchaseId).then((p) => {
-      prePurchase = p;
-    });
-
-    if (!prePurchase) {
-      reject(null);
-      return;
-    }
-
-    // restore stock
-    await editPurchase(prePurchase.id, {
-      stock: prePurchase.stock + preDistribute.number,
-    });
-
-    let purchase: Purchase = null;
-    await getPurchaseById(distribute.purchaseId).then((p) => {
-      purchase = p;
-    });
-
-    Promise.all([
-      Distribute.update(distribute, {
-        where: { id: distributeId },
-      }),
-      // and re-calculate stock
-      editPurchase(purchase.id, {
-        stock: purchase.stock - distribute.number,
-      }),
-    ]).then((values) => resolve(distribute));
+  return Distribute.update(distribute, {
+    where: { id: distributeId },
   });
 };
 
