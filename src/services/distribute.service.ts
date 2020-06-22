@@ -96,7 +96,7 @@ const restoreStock = async (
   });
 };
 
-//calculate stock
+// calculate stock
 const calcStock = async (
   distribute: Distribute
 ): Promise<[number, Purchase[]]> => {

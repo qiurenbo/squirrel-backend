@@ -31,7 +31,7 @@ router.post("/", async (ctx, next) => {
 router.put("/:distributeId", async (ctx, next) => {
   await editDistribute(ctx.params.distributeId, ctx.request.body)
     .then(([number, distributes]) => {
-      ctx.body = ctx.request.body;
+      ctx.body = distributes;
     })
     .catch((error) => {
       ctx.body = error;
@@ -40,7 +40,7 @@ router.put("/:distributeId", async (ctx, next) => {
 
 router.delete("/:distributeId", async (ctx, next) => {
   await deleteDistributeById(ctx.params.distributeId)
-    .then((rs) => {
+    .then((number) => {
       ctx.body = {};
     })
     .catch((error) => {

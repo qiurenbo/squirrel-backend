@@ -27,8 +27,8 @@ router.post("/", async (ctx, next) => {
 
 router.put("/:purchaseId", async (ctx, next) => {
   await editPurchase(ctx.params.purchaseId, ctx.request.body)
-    .then((purchase) => {
-      ctx.body = purchase;
+    .then(([number, purchases]) => {
+      ctx.body = purchases;
     })
     .catch((err) => {});
 });
