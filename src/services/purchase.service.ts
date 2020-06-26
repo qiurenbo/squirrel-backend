@@ -6,7 +6,6 @@ import {
 } from "sequelize";
 
 import Purchase from "../models/handout/purchase.model";
-import { resolve } from "path";
 
 interface IPurchaseQueryResult {
   length: number;

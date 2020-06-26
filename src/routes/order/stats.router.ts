@@ -1,19 +1,34 @@
 import * as Router from "koa-router";
 import OrderModel from "../../models/order/order.model";
-
+import CameraModel from "../../models/order/camera.model";
+import ProjectModel from "../../models/order/project.model";
 import MalfunctionModel from "../../models/order/malfunction.model";
 import TargetModel from "../../models/order/target/target.model";
 import * as moment from "moment";
 import { Sequelize } from "sequelize";
+import {
+  getWeekStats,
+  getYearStats,
+  getMonthStats,
+} from "../../services/stats.service";
 const router = new Router();
 
-const orderStats = {
-  orderOfToday: 45,
-  orderOfCurMonth: 95,
-
-  orderOfCurYear: 185,
-  orderOfHistory: 325,
-
+const stats = {
+  orderStat: {
+    week: 20,
+    month: 20,
+    year: 20,
+  },
+  cameraStat: {
+    week: 20,
+    month: 20,
+    year: 20,
+  },
+  projectStat: {
+    week: 20,
+    month: 20,
+    year: 20,
+  },
   pieOfMalfunctions: {
     lengend: ["无法开机", "无法联网", "软件异常"],
     series: [
@@ -50,45 +65,26 @@ const generatePieDataStructrue = (resultSet: any, modelName: string) => {
 
 router.get("/", async (ctx, next) => {
   //https://stackoverflow.com/questions/22643263/how-to-get-a-distinct-count-with-sequelize
+  stats.orderStat.week = await getWeekStats("orders");
+  stats.cameraStat.week = await getWeekStats("cameras");
 
-  await OrderModel.count({
-    where: { date: moment().format("YYYYMMDD") },
-  }).then((count) => {
-    // count is an integer
-    orderStats.orderOfToday = count;
-  });
+  stats.projectStat.week = await getWeekStats("projects");
 
-  await OrderModel.count({
-    //https://github.com/sequelize/sequelize/issues/7535
-    where: Sequelize.where(
-      Sequelize.fn("SUBSTR", Sequelize.col("date"), 1, 6),
-      "=",
-      moment().format("YYYYMM")
-    ),
-  }).then(function (count) {
-    // count is an integer
-    orderStats.orderOfCurMonth = count;
-  });
+  // @ts-ignore:disable-next-line
+  stats.orderStat.month = await getMonthStats(OrderModel);
+  // @ts-ignore:disable-next-line
+  stats.cameraStat.month = await getMonthStats(CameraModel);
+  // @ts-ignore:disable-next-line
+  stats.projectStat.month = await getMonthStats(ProjectModel);
 
-  await OrderModel.count({
-    where: Sequelize.where(
-      Sequelize.fn("SUBSTR", Sequelize.col("date"), 1, 4),
-      "=",
-      moment().format("YYYY")
-    ),
-  }).then((count) => {
-    // count is an integer
-    orderStats.orderOfCurYear = count;
-  });
+  // @ts-ignore:disable-next-line
+  stats.orderStat.year = await getYearStats(OrderModel);
+  // @ts-ignore:disable-next-line
+  stats.cameraStat.year = await getYearStats(CameraModel);
+  // @ts-ignore:disable-next-line
+  stats.projectStat.year = await getYearStats(ProjectModel);
 
-  await OrderModel.count({
-    where: {},
-  }).then((count) => {
-    // count is an integer
-    orderStats.orderOfHistory = count;
-  });
-
-  await OrderModel.findAll({
+  stats.pieOfTargets = await OrderModel.findAll({
     where: {},
     include: [TargetModel],
     group: ["Target.name"],
@@ -96,12 +92,12 @@ router.get("/", async (ctx, next) => {
       "Target.name",
       [Sequelize.fn("COUNT", "Target.name"), "count"],
     ],
-  }).then((resultSet) => {
+  }).then((resultSet: any) => {
     // count is an integer
-    orderStats.pieOfTargets = generatePieDataStructrue(resultSet, "Target");
+    return generatePieDataStructrue(resultSet, "Target");
   });
 
-  await OrderModel.findAll({
+  stats.pieOfMalfunctions = await OrderModel.findAll({
     where: {},
     include: [MalfunctionModel],
     group: ["Malfunction.name"],
@@ -109,15 +105,12 @@ router.get("/", async (ctx, next) => {
       "Malfunction.name",
       [Sequelize.fn("COUNT", "Malfunction.name"), "count"],
     ],
-  }).then((resultSet) => {
+  }).then((resultSet: any) => {
     // count is an integer
-    orderStats.pieOfMalfunctions = generatePieDataStructrue(
-      resultSet,
-      "Malfunction"
-    );
+    return generatePieDataStructrue(resultSet, "Malfunction");
   });
 
-  ctx.body = orderStats;
+  ctx.body = stats;
 });
 
 export default router;
