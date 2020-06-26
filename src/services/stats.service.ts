@@ -5,7 +5,7 @@ import * as moment from "moment";
 export const getWeekStats = async (table: string) => {
   return (
     await sequelize.query(
-      `select * from ${table} where YEARWEEK(date)=YEARWEEK(NOW(),1)`,
+      `select * from ${table} where YEARWEEK(date,1)=YEARWEEK(NOW(),1)`,
       { type: QueryTypes.SELECT }
     )
   ).length;
